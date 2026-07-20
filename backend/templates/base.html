@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Site Info -->
+    {% if title %}
+      <title>FastAPI Blog - {{ title }}</title>
+    {% else %}
+      <title>FastAPI Blog</title>
+    {% endif %}
+    <meta name="description" content="FastAPI Tutorial">
+    <meta name="author" content="Corey Schafer">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="FastAPI Blog">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <meta property="og:image:alt" content="">
+
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Custom Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (via CDN for drop-in replacement) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              steel: '#527c9f',
+            },
+            fontFamily: {
+              sans: ['Nunito', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" type="text/css" href= {{ url_for('static', path='css/main.css') }}>
+
+    <!-- Theme color -->
+    <meta name="theme-color" content="#527c9f">
+
+    <!-- Favicons -->
+    <link rel="icon" href= {{ url_for('static', path='icons/favicon.ico') }} sizes="any">
+    <link rel="icon" href= {{ url_for('static', path='icons/icon.svg') }} type="image/svg+xml">
+    <link rel="apple-touch-icon" sizes="180x180" href= {{ url_for('static', path='icons/icon.png') }}>
+    <link rel="manifest" href= {{ url_for('static', path='site.webmanifest') }}>
+  </head>
+
+  <body class="flex flex-col min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+    <header class="site-header">
+      <nav class="bg-steel fixed top-0 w-full z-50 shadow-md">
+        <div class="container mx-auto px-4">
+          <div class="flex justify-between items-center py-3">
+
+            <!-- Brand & Left Nav -->
+            <div class="flex items-center">
+              <a class="text-white text-xl font-bold mr-8 hover:text-gray-200" href= {{ url_for('home') }}>FastAPI Blog</a>
+
+              <!-- Desktop Left Nav -->
+              <div class="hidden md:flex space-x-4">
+                <a class="text-white hover:text-gray-200 font-medium" aria-current="page" href={{ url_for('home') }}>Home</a>
+              </div>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white focus:outline-none"
+                    type="button"
+                    onclick="document.getElementById('navbarToggle').classList.toggle('hidden')"
+                    aria-label="Toggle navigation">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+              </svg>
+            </button>
+
+            <!-- Desktop Right Nav -->
+            <div class="hidden md:flex items-center space-x-3">
+              <a class="border border-white text-white hover:bg-white hover:text-steel px-4 py-1.5 rounded transition" href="#">Login</a>
+              <a class="bg-white text-steel hover:bg-gray-100 px-4 py-1.5 rounded font-medium transition" href="#">Register</a>
+
+              <!-- Theme Dropdown (Desktop) -->
+              <div class="relative ml-2">
+                <button onclick="document.getElementById('themeDropdown').classList.toggle('hidden')"
+                        class="text-white flex items-center hover:text-gray-200 focus:outline-none">
+                  <span id="bd-theme-text-desktop">🌗 Auto</span>
+                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <ul id="themeDropdown" class="hidden absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-50">
+                  <li><button class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" data-theme-value="light">🌝 Light</button></li>
+                  <li><button class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" data-theme-value="dark">🌚 Dark</button></li>
+                  <li><button class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" data-theme-value="auto">🌗 Auto</button></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Nav Menu (Collapsible) -->
+          <div id="navbarToggle" class="hidden md:hidden pb-4">
+            <div class="flex flex-col space-y-2 mt-2">
+              <a class="text-white font-medium block px-2 py-1 hover:bg-white/10 rounded" href={{ url_for('home') }}>Home</a>
+              <hr class="border-white/20 my-2">
+              <a class="text-white block px-2 py-1 hover:bg-white/10 rounded" href="#">Login</a>
+              <a class="text-white block px-2 py-1 hover:bg-white/10 rounded" href="#">Register</a>
+
+              <!-- Theme Selection Mobile -->
+              <div class="px-2 py-2">
+                <p class="text-white/70 text-sm mb-2">Theme</p>
+                <div class="flex space-x-2">
+                  <button class="text-sm bg-white/10 text-white px-3 py-1 rounded" data-theme-value="light">🌝</button>
+                  <button class="text-sm bg-white/10 text-white px-3 py-1 rounded" data-theme-value="dark">🌚</button>
+                  <button class="text-sm bg-white/10 text-white px-3 py-1 rounded" data-theme-value="auto">🌗</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main role="main" class="container mx-auto px-4 pt-24 pb-12 flex-grow">
+      <div class="flex flex-col md:flex-row gap-8">
+
+        <!-- Main Column -->
+        <div class="w-full md:w-2/3">
+          {% block content %}
+          {% endblock content %}
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="w-full md:w-1/3">
+          <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mb-6 shadow-sm">
+            <h3 class="text-xl font-semibold mb-2">Our Sidebar</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-4 text-sm">You can put any information here you'd like.</p>
+            <ul class="flex flex-col border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden bg-white dark:bg-gray-900">
+              <li class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition">Latest Posts</li>
+              <li class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition">Announcements</li>
+              <li class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition">Calendars</li>
+              <li class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition">etc</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto py-6 bg-gray-100 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
+      <div class="container mx-auto px-4 text-center">
+        <p class="text-gray-500 dark:text-gray-400 mb-0">
+          © <span id="year"></span> Corey Schafer
+        </p>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // Set the current year in the footer
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('themeDropdown');
+        const isClickInside = dropdown.contains(event.target) || event.target.closest('#bd-theme-text-desktop') || event.target.closest('button[onclick*="themeDropdown"]');
+        if (!isClickInside && !dropdown.classList.contains('hidden')) {
+          dropdown.classList.add('hidden');
+        }
+      });
+
+      // Dark Mode Toggle Logic (Tailwind compatible)
+      const setTheme = (theme) => {
+        const root = document.documentElement;
+
+        if (theme === 'auto') {
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            root.classList.add('dark');
+          } else {
+            root.classList.remove('dark');
+          }
+        } else if (theme === 'dark') {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+
+        localStorage.setItem('theme', theme);
+
+        // Update desktop button text
+        const themeText = { light: '🌝 Light', dark: '🌚 Dark', auto: '🌗 Auto' };
+        document.getElementById('bd-theme-text-desktop').textContent = themeText[theme];
+
+        // Close dropdown if open
+        document.getElementById('themeDropdown').classList.add('hidden');
+      };
+
+      // Listen for system theme changes when on 'auto'
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (localStorage.getItem('theme') === 'auto') {
+          setTheme('auto');
+        }
+      });
+
+      // Set theme on click
+      document.querySelectorAll('[data-theme-value]').forEach(button => {
+        button.addEventListener('click', () => {
+          setTheme(button.getAttribute('data-theme-value'));
+        });
+      });
+
+      // Initialize Theme
+      setTheme(localStorage.getItem('theme') || 'auto');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,304 @@
+:root {
+  /* Fonts */
+  --font-heading: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --font-body: "Nunito", system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+
+  /* Colors */
+  --color-bg-body: #ffffff;
+  --color-bg-content: #ffffff;
+  --color-text-primary: #2b2b2b;
+  --color-text-heading: #1f3a1a;
+  --color-steel: #468432; /* primary green */
+  --color-light-green: #9AD872; /* accent light green */
+  --color-warm: #FFEF91; /* pale yellow */
+  --color-accent: #FFA02E; /* orange accent */
+  --color-nav-link: #9AD872;
+  --color-nav-link-hover: #ffffff;
+  --color-link-hover: #FFA02E;
+  --color-border: #e6f0dd;
+  --color-border-light: #f0f6ed;
+
+  /* Spacing */
+  --spacing-xl: 5rem;
+
+  /* Sizing */
+  --article-img-size: 4rem; /* 64px converted to rem */
+  --account-img-size: 7.813rem; /* 125px converted to rem */
+}
+
+/* Base Styles */
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg-body);
+  color: var(--color-text-primary);
+}
+
+main {
+  padding-top: var(--spacing-xl);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  color: var(--color-text-heading);
+}
+
+.navbar-brand {
+  font-family: var(--font-heading);
+  color: var(--color-text-heading);
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-steel);
+}
+
+a:hover,
+a:focus {
+  color: var(--color-accent);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-link-hover);
+  outline-offset: 2px;
+}
+
+/* Headers and Navigation */
+.bg-steel {
+  background-color: var(--color-steel);
+}
+
+.site-header .navbar-nav .nav-link {
+  color: #ffffff;
+  transition: color 0.2s ease-in-out;
+}
+
+.site-header .navbar-nav .nav-link:hover,
+.site-header .navbar-nav .nav-link:focus {
+  color: #fffde6; /* subtle light */
+}
+
+/* Ensure navbar brand and toggler are visible on the green header */
+.site-header .navbar.bg-steel .navbar-brand,
+.site-header .navbar.bg-steel .navbar-toggler,
+.site-header .navbar.bg-steel .nav-link,
+.site-header .navbar.bg-steel .dropdown-toggle {
+  color: #ffffff !important;
+}
+
+/* Make header buttons readable */
+.site-header .navbar.bg-steel .btn-light {
+  color: var(--color-steel);
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 600;
+}
+
+/* Content Sections */
+.content-section {
+  background: var(--color-bg-content);
+  /* visible green border on all sides */
+  border: 3px solid var(--color-steel);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  transition: box-shadow 0.15s ease, transform 0.15s ease,
+    border-color 0.15s ease;
+  color: var(--color-text-primary);
+}
+
+.content-section:hover {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+  border-color: var(--color-light-green);
+}
+
+/* Articles */
+.article-title {
+  color: var(--color-text-heading);
+  transition: color 0.2s ease-in-out;
+}
+
+a.article-title:hover,
+a.article-title:focus {
+  color: var(--color-steel);
+  text-decoration: none;
+}
+
+.article-content {
+  white-space: pre-line;
+  font-size: 1.25rem;
+}
+
+.article-img {
+  height: var(--article-img-size);
+  width: var(--article-img-size);
+  flex-shrink: 0;
+  object-fit: cover;
+  border: 1px solid var(--color-steel);
+  box-shadow: 0 0 0 2px var(--color-bg-content);
+}
+
+.article-metadata {
+  padding-bottom: 0.063rem; /* 1px converted to rem */
+  border-bottom: 1px solid var(--color-border);
+}
+
+.article-metadata a {
+  transition: color 0.2s ease-in-out;
+}
+
+.article-metadata a:hover,
+.article-metadata a:focus {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+/* Improve readability inside content sections */
+.content-section h3,
+.content-section h4,
+.content-section h5,
+.content-section p,
+.content-section .list-group-item {
+  color: var(--color-text-primary);
+}
+
+.article-svg {
+  width: 1.563rem; /* 25px converted to rem */
+  height: 1.563rem;
+  vertical-align: middle;
+}
+
+/* Account/Profile */
+.account-img {
+  height: var(--account-img-size);
+  width: var(--account-img-size);
+  object-fit: cover;
+}
+
+.account-heading {
+  font-size: 2.5rem;
+}
+
+.file-input-sm {
+  max-width: 300px;
+}
+
+/* Custom Button Colors - Light Mode */
+.btn-outline-primary {
+  --bs-btn-color: var(--color-steel);
+  --bs-btn-border-color: var(--color-steel);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #3a6b29;
+  --bs-btn-hover-border-color: #335a22;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #335a22;
+  --bs-btn-active-border-color: #2e511d;
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: #495057;
+  --bs-btn-border-color: #6c757d;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #5a6268;
+  --bs-btn-hover-border-color: #545b62;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #545b62;
+  --bs-btn-active-border-color: #4e555b;
+}
+
+.btn-outline-danger {
+  --bs-btn-color: #a85b5b;
+  --bs-btn-border-color: #a85b5b;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #924e4e;
+  --bs-btn-hover-border-color: #874848;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #874848;
+  --bs-btn-active-border-color: #7c4242;
+}
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--color-steel);
+  --bs-btn-border-color: var(--color-steel);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #3a6b29;
+  --bs-btn-hover-border-color: #335a22;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #335a22;
+  --bs-btn-active-border-color: #2e511d;
+}
+
+.btn-danger {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--color-accent);
+  --bs-btn-border-color: var(--color-accent);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #e08a1f;
+  --bs-btn-hover-border-color: #d47a16;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #d47a16;
+  --bs-btn-active-border-color: #c56d12;
+}
+
+/* Dark-mode rules removed to prevent automatic black/white theme switching */
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .account-heading {
+    font-size: 2rem;
+  }
+
+  .article-img {
+    height: 3rem;
+    width: 3rem;
+  }
+}
+
+/* Dark Mode Features */
+/* Dark-mode variables removed to keep consistent light palette */
+
+/* Custom Modal Colors */
+.modal-header.bg-success {
+  background-color: var(--color-steel) !important;
+}
+
+.modal-header.bg-danger {
+  background-color: var(--color-accent) !important;
+}
+
+/* Ensure modal header text stays white in both themes */
+.modal-header.bg-success .modal-title,
+.modal-header.bg-danger .modal-title {
+  color: #ffffff !important;
+}
+
+/* Ensure list-group items (sidebar) are visible in the light palette */
+.content-section .list-group {
+  background: transparent;
+}
+
+.content-section .list-group-item {
+  background: var(--color-bg-content) !important;
+  color: var(--color-text-primary) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+/* Ensure dropdown menus (e.g., header theme dropdown) are visible */
+.dropdown-menu {
+  background: var(--color-bg-content) !important;
+  color: var(--color-text-primary) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+/* Tweak list-group-item padding/contrast */
+.content-section .list-group-item {
+  padding: 0.75rem 1rem;
+}

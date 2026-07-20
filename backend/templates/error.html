@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+  <!-- Error Article Container -->
+  <article class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm py-3 px-4 mb-4">
+
+    <!-- Error Title Header -->
+    <h1 class="text-3xl font-bold mb-2">
+      <a class="text-gray-900 dark:text-white hover:text-steel transition-colors" href="#">
+        Oops... {{ status_code }} Error
+      </a>
+    </h1>
+
+    <!-- Error Description Message -->
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{{ message }}</p>
+
+  </article>
+{% endblock content %}
