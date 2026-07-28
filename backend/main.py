@@ -2,9 +2,7 @@ from contextlib import asynccontextmanager
 # asynccontextmanager: for life span function
 from typing import Annotated
 from fastapi import FastAPI,Request,HTTPException,Depends,status
-# Request: used for jinja2 template
-# HTTPException: used for to return proper http responses
-# status: gives use constant for HTTPException which make code more readable
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exception_handlers import (
     http_exception_handler,
     request_validation_exception_handler,
@@ -54,6 +52,16 @@ async def lifespan(_app: FastAPI):
     await engine.dispose()
 #  in end it do async way to to creating database if it do not exit 
 app = FastAPI(lifespan=lifespan)
+
+# Enable CORS so Next.js frontend (port 3000) can communicate with FastAPI backend (port 8000)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # ==============================================================================
 # 🚨 CRITICAL STUDY NOTE: SYNC VS. ASYNC RELATIONSHIP LOADING (THE #1 ASYNC PITFALL)
 # ==============================================================================
@@ -97,7 +105,10 @@ app.include_router(posts.router, prefix="/api/posts", tags=["posts"])
 @app.get("/", include_in_schema=False, name="home")
 # given name="home" so {{ url_for('home') }} use explict name when apply two const.
 async def home(request: Request, db: Annotated[AsyncSession, Depends(get_db)]):# request parameter as argument because Jinja2 required that
-    result = await db.execute(select(models.Post).options(selectinload(models.Post.author)))
+    result = await db.execute(select(models.Post)
+    .options(selectinload(models.Post.author))
+    .order_by(models.Post.date_posted.desc())
+    )
     # options: this is eager loading
     posts = result.scalars().all()
 
@@ -171,12 +182,35 @@ async def user_posts_page(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found",
         )
-    result = await db.execute(select(models.Post).options(selectinload(models.Post.author)).where(models.Post.user_id == user_id))
+    result = await db.execute(
+        select(models.Post)
+        .options(selectinload(models.Post.author))
+        .where(models.Post.user_id == user_id)
+        .order_by(models.Post.date_posted.desc())
+    )
     posts = result.scalars().all()
     return templates.TemplateResponse(
         request,
         "user_posts.html",
         {"posts": posts, "user": user, "title": f"{user.username}'s Posts"},
+    )
+## logi
+# n and register template_routes
+@app.get("/login", include_in_schema=False)
+async def login_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "login.html",
+        {"title": "Login"},
+    )
+
+
+@app.get("/register", include_in_schema=False)
+async def register_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "register.html",
+        {"title": "Register"},
     )
 
 

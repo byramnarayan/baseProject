@@ -8,19 +8,21 @@ export function getErrorMessage(error) {
   return "An error occurred. Please try again.";
 }
 
-// Show a Bootstrap modal by ID
+// Show a native HTML dialog modal by ID
 export function showModal(modalId) {
-  const modal = bootstrap.Modal.getOrCreateInstance(
-    document.getElementById(modalId),
-  );
-  modal.show();
+  const modal = document.getElementById(modalId);
+  if (modal && typeof modal.showModal === 'function') {
+    modal.showModal();
+  }
   return modal;
 }
 
-// Hide a Bootstrap modal by ID
+// Hide a native HTML dialog modal by ID
 export function hideModal(modalId) {
-  const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
-  if (modal) modal.hide();
+  const modal = document.getElementById(modalId);
+  if (modal && typeof modal.close === 'function') {
+    modal.close();
+  }
 }
 
 // XSS prevention for dynamic content insertion

@@ -27,6 +27,9 @@ class User(Base):
         String(120), nullable=True, default=None
     )
 
+    # need to add th passwored hased
+    password_hash: Mapped[str]= mapped_column(String(200), nullable=False)
+
     
     # One-to-Many Relationship: One user can have many posts.
     # 'back_populates' syncs this property with the corresponding 'author' field in the Post model.
@@ -53,7 +56,7 @@ class User(Base):
         Separates data storage logic from user presentation layer logic.
         """
         if self.image_file:
-            return f"media/profile_pics/{self.image_file}"
+            return f"/media/profile_pics/{self.image_file}"
         return "/static/profile_pics/default.jpg" 
 
 class Post(Base):

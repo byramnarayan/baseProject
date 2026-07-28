@@ -44,20 +44,33 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    pass
+    password:str=Field(min_length=8)
 
-
-class UserResponse(UserBase):
+# dont want other person to see the author data so created the public and private response 
+# class UserResponse(UserBase):
+class UserPublic(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    username:str
     image_file: str|None
     image_path: str
     # image_path define in model it is not database col from_attributes let read that attribute 
+
+
+class UserPrivate(UserPublic):
+    email:EmailStr
+    
 
 class UserUpdate(BaseModel):
     username: str | None= Field(default=None,min_length=1, max_length=50)
     email: EmailStr | None = Field(default=None, max_length=120)
     image_file: str | None= Field(default=None,min_length=1, max_length=500)
+
+
+#  need token schema for login responses
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 class PostBase(BaseModel):
     """
@@ -68,7 +81,6 @@ class PostBase(BaseModel):
     """
     title: str = Field(min_length=1, max_length=100, description="The headline of the post")
     content: str = Field(min_length=1, description="The main body text of the post")
-    author: str = Field(min_length=1, max_length=50, description="The author's display name")
 
 
 class PostCreate(PostBase):
@@ -103,7 +115,7 @@ class PostResponse(PostBase):
         id: int #scope to classs not give any linter worning
         user_id:int
         date_posted: datetime
-        author: UserResponse #get nested user id, email, and other in json response
+        author: UserPublic #get nested user id, email, and other in json response
 
 
     # from_attributes: it can read data from the attributes not just dictnory help full when add the database

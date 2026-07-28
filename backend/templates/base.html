@@ -1,224 +1,398 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Site Info -->
-    {% if title %}
-      <title>FastAPI Blog - {{ title }}</title>
-    {% else %}
-      <title>FastAPI Blog</title>
-    {% endif %}
-    <meta name="description" content="FastAPI Tutorial">
-    <meta name="author" content="Corey Schafer">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Open Graph Tags -->
-    <meta property="og:title" content="FastAPI Blog">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="">
-    <meta property="og:image" content="">
-    <meta property="og:image:alt" content="">
+  <!-- Site Info -->
+  {% if title %}
+  <title>Wakamono - {{ title }}</title>
+  {% else %}
+  <title>Wakamono - Community & News</title>
+  {% endif %}
+  <meta name="description" content="Community + news + resource-hub website">
+  <meta name="author" content="Site Name">
 
-    <!-- Preconnect for Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preconnect for Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Custom Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+  <!-- Custom Font (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS (via CDN for drop-in replacement) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              steel: '#527c9f',
-            },
-            fontFamily: {
-              sans: ['Nunito', 'sans-serif'],
-            }
+  <!-- Tailwind CSS (via CDN for drop-in replacement) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#0B1B33',
+            gold: '#F2B807',
+            cream: '#F7EFE1',
+            ink: '#12213B',
+            'muted-grey': '#6B7280',
+            'success-green': '#2F855A',
+          },
+          fontFamily: {
+            sans: ['Inter', 'Helvetica Neue', 'sans-serif'],
+            heading: ['Inter', 'Helvetica Neue', 'sans-serif'],
+          },
+          maxWidth: {
+            'content': '760px',
+          },
+          borderColor: {
+            DEFAULT: 'rgba(18, 33, 59, 0.55)',
+            brand: 'rgba(18, 33, 59, 0.55)',
           }
         }
       }
-    </script>
+    }
+  </script>
 
-    <!-- Stylesheet -->
-    <link rel="stylesheet" type="text/css" href= {{ url_for('static', path='css/main.css') }}>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='css/main.css') }}">
 
-    <!-- Theme color -->
-    <meta name="theme-color" content="#527c9f">
+  <!-- Theme color -->
+  <meta name="theme-color" content="#0B1B33">
 
-    <!-- Favicons -->
-    <link rel="icon" href= {{ url_for('static', path='icons/favicon.ico') }} sizes="any">
-    <link rel="icon" href= {{ url_for('static', path='icons/icon.svg') }} type="image/svg+xml">
-    <link rel="apple-touch-icon" sizes="180x180" href= {{ url_for('static', path='icons/icon.png') }}>
-    <link rel="manifest" href= {{ url_for('static', path='site.webmanifest') }}>
-  </head>
+  <!-- Favicons -->
+  <link rel="icon" href="{{ url_for('static', path='icons/favicon.ico') }}" sizes="any">
+  <link rel="icon" href="{{ url_for('static', path='icons/icon.svg') }}" type="image/svg+xml">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='icons/icon.png') }}">
+  <link rel="manifest" href="{{ url_for('static', path='site.webmanifest') }}">
+</head>
 
-  <body class="flex flex-col min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
-    <header class="site-header">
-      <nav class="bg-steel fixed top-0 w-full z-50 shadow-md">
-        <div class="container mx-auto px-4">
-          <div class="flex justify-between items-center py-3">
+<body class="flex flex-col min-h-screen bg-white text-ink font-sans antialiased tracking-normal">
 
-            <!-- Brand & Left Nav -->
-            <div class="flex items-center">
-              <a class="text-white text-xl font-bold mr-8 hover:text-gray-200" href= {{ url_for('home') }}>FastAPI Blog</a>
+  <!-- Header Band (Navy) -->
+  <header class="site-header">
+    <nav class="bg-navy fixed top-0 w-full z-50">
+      <div class="max-w-[1200px] mx-auto px-4 md:px-8">
+        <div class="flex justify-between items-center py-4">
 
-              <!-- Desktop Left Nav -->
-              <div class="hidden md:flex space-x-4">
-                <a class="text-white hover:text-gray-200 font-medium" aria-current="page" href={{ url_for('home') }}>Home</a>
-              </div>
+          <!-- Brand & Left Nav -->
+          <div class="flex items-center">
+
+            <!-- Desktop Left Nav -->
+            <div class="hidden md:flex items-center space-x-6">
+              <a href="{{ url_for('home') }}" class="mr-8 flex items-center">
+                <img src="{{ url_for('static', path='icons/icon.svg') }}" alt="Site Logo" class="h-10 w-auto">
+              </a>
+              <a class="text-white hover:text-gold font-medium text-sm tracking-wide transition-colors"
+                href="#">LIBRARY</a>
+              <a class="text-white hover:text-gold font-medium text-sm tracking-wide transition-colors"
+                href="#">COMMUNITY</a>
             </div>
+          </div>
 
-            <!-- Mobile Menu Button -->
-            <button class="md:hidden text-white focus:outline-none"
-                    type="button"
-                    onclick="document.getElementById('navbarToggle').classList.toggle('hidden')"
-                    aria-label="Toggle navigation">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-              </svg>
+          <!-- Mobile Menu Button -->
+          <button class="md:hidden text-white focus:outline-none hover:text-gold transition-colors" type="button"
+            onclick="document.getElementById('navbarToggle').classList.toggle('hidden')" aria-label="Toggle navigation">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+          </button>
+
+          <!-- Desktop Right Nav -->
+          <div class="hidden md:flex items-center space-x-4">
+            <button type="button" onclick="document.getElementById('createPostModal').showModal()"
+              class="px-4 py-2 border border-white/30 text-white hover:border-white hover:text-white rounded-none font-bold text-sm tracking-wide transition-colors">
+              NEW POST
             </button>
-
-            <!-- Desktop Right Nav -->
-            <div class="hidden md:flex items-center space-x-3">
-              <a class="border border-white text-white hover:bg-white hover:text-steel px-4 py-1.5 rounded transition" href="#">Login</a>
-              <a class="bg-white text-steel hover:bg-gray-100 px-4 py-1.5 rounded font-medium transition" href="#">Register</a>
-
-              <!-- Theme Dropdown (Desktop) -->
-              <div class="relative ml-2">
-                <button onclick="document.getElementById('themeDropdown').classList.toggle('hidden')"
-                        class="text-white flex items-center hover:text-gray-200 focus:outline-none">
-                  <span id="bd-theme-text-desktop">🌗 Auto</span>
-                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <ul id="themeDropdown" class="hidden absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-50">
-                  <li><button class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" data-theme-value="light">🌝 Light</button></li>
-                  <li><button class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" data-theme-value="dark">🌚 Dark</button></li>
-                  <li><button class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" data-theme-value="auto">🌗 Auto</button></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <!-- Mobile Nav Menu (Collapsible) -->
-          <div id="navbarToggle" class="hidden md:hidden pb-4">
-            <div class="flex flex-col space-y-2 mt-2">
-              <a class="text-white font-medium block px-2 py-1 hover:bg-white/10 rounded" href={{ url_for('home') }}>Home</a>
-              <hr class="border-white/20 my-2">
-              <a class="text-white block px-2 py-1 hover:bg-white/10 rounded" href="#">Login</a>
-              <a class="text-white block px-2 py-1 hover:bg-white/10 rounded" href="#">Register</a>
-
-              <!-- Theme Selection Mobile -->
-              <div class="px-2 py-2">
-                <p class="text-white/70 text-sm mb-2">Theme</p>
-                <div class="flex space-x-2">
-                  <button class="text-sm bg-white/10 text-white px-3 py-1 rounded" data-theme-value="light">🌝</button>
-                  <button class="text-sm bg-white/10 text-white px-3 py-1 rounded" data-theme-value="dark">🌚</button>
-                  <button class="text-sm bg-white/10 text-white px-3 py-1 rounded" data-theme-value="auto">🌗</button>
-                </div>
-              </div>
-            </div>
+            <a class="text-white hover:text-gold text-sm font-medium transition-colors tracking-wide" href="#">LOGIN</a>
+            <a class="bg-gold text-navy hover:bg-yellow-400 px-5 py-2 rounded-none font-bold text-sm tracking-wide transition-colors"
+              href="#">JOIN</a>
           </div>
         </div>
-      </nav>
-    </header>
 
-    <!-- Main Content Area -->
-    <main role="main" class="container mx-auto px-4 pt-24 pb-12 flex-grow">
-      <div class="flex flex-col md:flex-row gap-8">
-
-        <!-- Main Column -->
-        <div class="w-full md:w-2/3">
-          {% block content %}
-          {% endblock content %}
-        </div>
-
-        <!-- Sidebar -->
-        <aside class="w-full md:w-1/3">
-          <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mb-6 shadow-sm">
-            <h3 class="text-xl font-semibold mb-2">Our Sidebar</h3>
-            <p class="text-gray-500 dark:text-gray-400 mb-4 text-sm">You can put any information here you'd like.</p>
-            <ul class="flex flex-col border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden bg-white dark:bg-gray-900">
-              <li class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition">Latest Posts</li>
-              <li class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition">Announcements</li>
-              <li class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition">Calendars</li>
-              <li class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition">etc</li>
-            </ul>
+        <!-- Mobile Nav Menu (Collapsible) -->
+        <div id="navbarToggle" class="hidden md:hidden pb-6">
+          <div class="flex flex-col space-y-4 mt-4">
+            <a class="text-white font-medium text-sm tracking-wide block hover:text-gold transition-colors"
+              href="{{ url_for('home') }}">NEWS</a>
+            <a class="text-white font-medium text-sm tracking-wide block hover:text-gold transition-colors"
+              href="#">LIBRARY</a>
+            <a class="text-white font-medium text-sm tracking-wide block hover:text-gold transition-colors"
+              href="#">COMMUNITY</a>
+            <hr class="border-white/10 my-2">
+            <!-- NOTE: Once auth is set up, this button will only be visible when logged in -->
+            <button type="button" onclick="document.getElementById('createPostModal').showModal()"
+              class="text-left px-4 py-2 border border-white/30 text-white hover:border-white hover:text-white rounded-none font-bold text-sm tracking-wide transition-colors">
+              NEW POST
+            </button>
+            <a class="text-white font-medium text-sm tracking-wide block hover:text-gold transition-colors"
+              href="#">LOGIN</a>
+            <a class="text-gold font-bold text-sm tracking-wide block hover:text-yellow-400 transition-colors"
+              href="#">JOIN</a>
           </div>
-        </aside>
+        </div>
       </div>
-    </main>
+    </nav>
+  </header>
 
-    <!-- Footer -->
-    <footer class="mt-auto py-6 bg-gray-100 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
-      <div class="container mx-auto px-4 text-center">
-        <p class="text-gray-500 dark:text-gray-400 mb-0">
-          © <span id="year"></span> Corey Schafer
+  <!-- Main Content Area -->
+  <main role="main" class="max-w-[1200px] mx-auto w-full px-4 md:px-8 pt-32 pb-16 flex-grow">
+
+    <!-- Filter/Search Bar Placeholder (Visible on indices) -->
+    <div
+      class="mb-8 flex flex-col sm:flex-row justify-between items-center border border-brand p-2 bg-white rounded-none">
+      <div class="flex space-x-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
+        <span
+          class="px-3 py-1 bg-gold text-navy text-xs font-bold uppercase tracking-wider border border-brand">All</span>
+        <span
+          class="px-3 py-1 bg-white text-muted-grey text-xs font-bold uppercase tracking-wider border border-brand hover:text-ink cursor-pointer">Guides</span>
+        <span
+          class="px-3 py-1 bg-white text-muted-grey text-xs font-bold uppercase tracking-wider border border-brand hover:text-ink cursor-pointer">Tools</span>
+      </div>
+      <div class="w-full sm:w-64 mt-2 sm:mt-0">
+        <input type="text" placeholder="Search..."
+          class="w-full text-sm border border-brand px-3 py-1.5 focus:outline-none focus:border-ink rounded-none bg-white">
+      </div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-12">
+      <!-- Main Column -->
+      <div class="w-full lg:w-2/3">
+        {% block content %}
+        {% endblock content %}
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="w-full lg:w-1/3 space-y-8">
+
+        <!-- Sidebar Widget: Featured -->
+        <div class="bg-cream border border-brand rounded-none p-6">
+          <h3 class="text-lg font-bold font-heading mb-4 uppercase tracking-wider text-ink border-b border-brand pb-2">
+            Featured Resources</h3>
+          <ul class="flex flex-col space-y-4 pt-2">
+            <li class="group cursor-pointer">
+              <a href="#" class="block">
+                <h4 class="font-bold text-ink group-hover:text-gold transition-colors">Official Documentation</h4>
+                <p class="text-sm text-muted-grey mt-1">The essential guide to getting started.</p>
+              </a>
+            </li>
+            <li class="group cursor-pointer">
+              <a href="#" class="block">
+                <h4 class="font-bold text-ink group-hover:text-gold transition-colors">Advanced Patterns Course</h4>
+                <p class="text-sm text-muted-grey mt-1">A vetted course by community leaders.</p>
+              </a>
+            </li>
+          </ul>
+          <a href="#"
+            class="inline-block mt-6 text-sm font-bold text-navy hover:text-gold uppercase tracking-wider border-b-2 border-navy hover:border-gold transition-colors">View
+            Library &rarr;</a>
+        </div>
+
+        <!-- Sidebar Widget: Community -->
+        <div class="bg-white border border-brand rounded-xl p-6">
+          <h3 class="text-lg font-bold font-heading mb-4 uppercase tracking-wider text-ink border-b border-brand pb-2">
+            Active Threads</h3>
+          <ul class="flex flex-col space-y-4 pt-2">
+            <li class="group cursor-pointer">
+              <a href="#" class="block">
+                <h4 class="font-bold text-ink group-hover:text-gold transition-colors">Best practices for state
+                  management?</h4>
+                <div class="flex items-center text-xs text-muted-grey mt-1 space-x-2">
+                  <span>14 Replies</span>
+                  <span>&middot;</span>
+                  <span>2h ago</span>
+                </div>
+              </a>
+            </li>
+            <li class="group cursor-pointer">
+              <a href="#" class="block">
+                <h4 class="font-bold text-ink group-hover:text-gold transition-colors">New Release Discussion</h4>
+                <div class="flex items-center text-xs text-muted-grey mt-1 space-x-2">
+                  <span>32 Replies</span>
+                  <span>&middot;</span>
+                  <span>5h ago</span>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </aside>
+    </div>
+  </main>
+
+  <!-- Footer Band (Navy) -->
+  <footer class="mt-auto py-12 bg-navy text-white">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="md:col-span-2">
+        <h2 class="text-xl font-bold font-heading mb-4 text-gold">Wakamono</h2>
+        <p class="text-white/70 text-sm max-w-sm leading-relaxed">
+          A single trusted destination for high-quality resources, original news, and community discussion.
         </p>
       </div>
-    </footer>
+      <div>
+        <h3 class="text-sm font-bold uppercase tracking-wider mb-4">Sections</h3>
+        <ul class="space-y-2 text-white/70 text-sm">
+          <li><a href="#" class="hover:text-gold transition-colors">News & Blog</a></li>
+          <li><a href="#" class="hover:text-gold transition-colors">Resource Library</a></li>
+          <li><a href="#" class="hover:text-gold transition-colors">Community Forum</a></li>
+          <li><a href="#" class="hover:text-gold transition-colors">Submit Resource</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold uppercase tracking-wider mb-4">Legal</h3>
+        <ul class="space-y-2 text-white/70 text-sm">
+          <li><a href="#" class="hover:text-gold transition-colors">About Us</a></li>
+          <li><a href="#" class="hover:text-gold transition-colors">Contact</a></li>
+          <li><a href="#" class="hover:text-gold transition-colors">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-gold transition-colors">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div
+      class="max-w-[1200px] mx-auto px-4 md:px-8 mt-12 pt-8 border-t border-white/10 text-center text-sm text-white/50">
+      <p>© <span id="year"></span> Site Name. All rights reserved.</p>
+    </div>
+  </footer>
+  <!-- Create Post Modal (Native HTML Dialog) -->
+  <dialog id="createPostModal"
+    class="backdrop:bg-navy/80 backdrop:backdrop-blur-sm rounded-none border border-brand bg-white p-0 w-full max-w-2xl text-ink shadow-2xl">
+    <div class="flex justify-between items-center px-6 py-4 border-b border-brand bg-cream">
+      <h5 class="text-lg font-bold font-heading uppercase tracking-wide">New Post</h5>
+      <button type="button" onclick="document.getElementById('createPostModal').close()"
+        class="text-muted-grey hover:text-ink focus:outline-none text-xl font-bold transition-colors">&times;</button>
+    </div>
+    <!-- imp createPostForm: ref this in javascripts -->
+    <form id="createPostForm" class="m-0">
+      <div class="px-6 py-6 space-y-4">
+        <div>
+          <label for="title" class="block text-sm font-bold uppercase tracking-wider mb-2">Title</label>
+          <input type="text" id="title" name="title" required
+            class="w-full border border-brand px-4 py-2 focus:outline-none focus:border-ink bg-white">
+          <!-- required attrib for basic broswer validation  -->
+        </div>
+        <div>
+          <label for="content" class="block text-sm font-bold uppercase tracking-wider mb-2">Content</label>
+          <textarea id="content" name="content" rows="5" required
+            class="w-full border border-brand px-4 py-2 focus:outline-none focus:border-ink bg-white"></textarea>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-brand">
+        <button type="button" onclick="document.getElementById('createPostModal').close()" class="px-5 py-2 text-xs font-bold uppercase tracking-wider border
+         border-brand text-ink bg-white hover:bg-cream transition-colors">Cancel</button>
+        <button type="submit" class="px-5 py-2 text-xs font-bold uppercase tracking-wider
+         border border-navy text-white bg-navy hover:bg-ink transition-colors">Post</button>
+      </div>
+    </form>
+  </dialog>
 
-    <!-- Scripts -->
-    <script>
-      // Set the current year in the footer
-      document.getElementById('year').textContent = new Date().getFullYear();
+  <!-- Success Modal -->
+  <dialog id="successModal"
+    class="backdrop:bg-navy/80 backdrop:backdrop-blur-sm rounded-none border border-success-green bg-white p-0 w-full max-w-md text-ink shadow-2xl">
+    <div class="flex justify-between items-center px-6 py-4 border-b border-success-green bg-success-green text-white">
+      <h5 class="text-lg font-bold font-heading uppercase tracking-wide">Success</h5>
+      <button type="button" onclick="document.getElementById('successModal').close()"
+        class="text-white/80 hover:text-white focus:outline-none text-xl font-bold transition-colors">&times;</button>
+    </div>
+    <div class="px-6 py-6 text-lg">
+      <p id="successMessage"></p>
+    </div>
+    <div class="flex justify-end px-6 py-4 bg-gray-50 border-t border-success-green/20">
+      <button type="button" onclick="document.getElementById('successModal').close()"
+        class="px-5 py-2 text-xs font-bold uppercase tracking-wider border border-brand text-ink bg-white hover:bg-cream transition-colors">Close</button>
+    </div>
+  </dialog>
 
-      // Close dropdown when clicking outside
-      document.addEventListener('click', function(event) {
-        const dropdown = document.getElementById('themeDropdown');
-        const isClickInside = dropdown.contains(event.target) || event.target.closest('#bd-theme-text-desktop') || event.target.closest('button[onclick*="themeDropdown"]');
-        if (!isClickInside && !dropdown.classList.contains('hidden')) {
-          dropdown.classList.add('hidden');
-        }
-      });
+  <!-- Error Modal -->
+  <dialog id="errorModal"
+    class="backdrop:bg-navy/80 backdrop:backdrop-blur-sm rounded-none border border-red-600 bg-white p-0 w-full max-w-md text-ink shadow-2xl">
+    <div class="flex justify-between items-center px-6 py-4 border-b border-red-600 bg-red-600 text-white">
+      <h5 class="text-lg font-bold font-heading uppercase tracking-wide">Error</h5>
+      <button type="button" onclick="document.getElementById('errorModal').close()"
+        class="text-white/80 hover:text-white focus:outline-none text-xl font-bold transition-colors">&times;</button>
+    </div>
+    <div class="px-6 py-6 text-lg">
+      <p id="errorMessage"></p>
+    </div>
+    <div class="flex justify-end px-6 py-4 bg-gray-50 border-t border-red-600/20">
+      <button type="button" onclick="document.getElementById('errorModal').close()"
+        class="px-5 py-2 text-xs font-bold uppercase tracking-wider border border-brand text-ink bg-white hover:bg-cream transition-colors">Close</button>
+    </div>
+  </dialog>
 
-      // Dark Mode Toggle Logic (Tailwind compatible)
-      const setTheme = (theme) => {
-        const root = document.documentElement;
+  <!-- Scripts -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 
-        if (theme === 'auto') {
-          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            root.classList.add('dark');
-          } else {
-            root.classList.remove('dark');
-          }
-        } else if (theme === 'dark') {
-          root.classList.add('dark');
-        } else {
-          root.classList.remove('dark');
-        }
 
-        localStorage.setItem('theme', theme);
+  <!-- Create Post Form Handler -->
+  <script type="module">
+    import {
+      getErrorMessage,
+      hideModal,
+      showModal,
+    } from "/static/js/utils.js";
 
-        // Update desktop button text
-        const themeText = { light: '🌝 Light', dark: '🌚 Dark', auto: '🌗 Auto' };
-        document.getElementById('bd-theme-text-desktop').textContent = themeText[theme];
+    const createForm = document.getElementById("createPostForm");
 
-        // Close dropdown if open
-        document.getElementById('themeDropdown').classList.add('hidden');
-      };
+    createForm.addEventListener("submit", async (event) => {
+      // Stop default form submission - we'll handle it with JavaScript
+      event.preventDefault();
 
-      // Listen for system theme changes when on 'auto'
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        if (localStorage.getItem('theme') === 'auto') {
-          setTheme('auto');
-        }
-      });
+      // Gather form values into a plain object {title: "...", content: "..."}
+      const formData = new FormData(createForm);
+      const postData = Object.fromEntries(formData.entries());
 
-      // Set theme on click
-      document.querySelectorAll('[data-theme-value]').forEach(button => {
-        button.addEventListener('click', () => {
-          setTheme(button.getAttribute('data-theme-value'));
+      // TEMPORARY - hardcoded until authorization (Tutorial 11)
+      postData.user_id = 1;
+
+      try {
+        // POST to our API as JSON
+        const response = await fetch("/api/posts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
         });
-      });
 
-      // Initialize Theme
-      setTheme(localStorage.getItem('theme') || 'auto');
-    </script>
-  </body>
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById("successMessage").textContent =
+            `Post "${data.title}" created successfully!`;
+
+          hideModal("createPostModal");
+          showModal("successModal");
+
+          // Clear form
+          createForm.reset();
+
+          // Reload page after modal is closed to show new post
+          document
+            .getElementById("successModal")
+            .addEventListener(
+              "close",
+              () => {
+                window.location.reload();
+              },
+              { once: true }
+            );
+        } else {
+          const error = await response.json();
+          document.getElementById("errorMessage").textContent =
+            getErrorMessage(error);
+
+          hideModal("createPostModal");
+          showModal("errorModal");
+        }
+      } catch (error) {
+        document.getElementById("errorMessage").textContent =
+          "Network error. Please check your connection and try again.";
+        showModal("errorModal");
+      }
+    });
+  </script>
+  {% block scripts %}
+  {% endblock scripts %}
+</body>
+
 </html>

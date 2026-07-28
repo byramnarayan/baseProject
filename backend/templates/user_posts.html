@@ -1,55 +1,61 @@
 {% extends "base.html" %}
 {% block content %}
   <!-- Page Header -->
-  <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-    Posts by {{ user.username }}
-  </h1>
+  <div class="border-b border-brand pb-4 mb-8">
+    <h1 class="text-3xl font-bold font-heading text-ink">
+      Posts by {{ user.username }}
+    </h1>
+    <p class="text-muted-grey mt-2">Viewing all contributions from this member.</p>
+  </div>
 
   {% for post in posts %}
     <!-- Individual Post Card -->
-    <article class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm py-3 px-4 mb-4">
+    <article class="bg-white border border-brand rounded-none p-5 mb-6 group">
       <div class="flex items-start gap-4">
         
         <!-- Profile Image -->
-        <img class="rounded-full shrink-0 border border-gray-200 dark:border-gray-600 p-1 bg-white dark:bg-gray-700 object-cover"
+        <img class="rounded-full shrink-0 border border-brand object-cover"
              src="{{ post.author.image_path }}"
              alt="{{ post.author.username }}'s profile picture"
-             width="64"
-             height="64"
+             width="48"
+             height="48"
              loading="lazy">
         
         <!-- Main Content Area -->
         <div class="grow">
           
           <!-- Metadata Section -->
-          <div class="border-b border-gray-200 dark:border-gray-700 pb-1 mb-2">
-            <a class="mr-2 font-semibold text-steel hover:underline"
+          <div class="mb-2 flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-muted-grey">
+            <a class="hover:text-gold transition-colors"
                href="{{ url_for('user_posts', user_id=post.author.id) }}">
               {{ post.author.username }}
             </a>
-            <small class="text-sm text-gray-500 dark:text-gray-400">
-              {{ post.date_posted.strftime("%B %d, %Y") }}
-            </small>
+            <span>&middot;</span>
+            <span>{{ post.date_posted.strftime("%B %d, %Y") }}</span>
           </div>
           
           <!-- Post Title Link -->
-          <h2>
-            <a class="text-2xl font-bold text-gray-900 dark:text-white hover:text-steel transition-colors"
+          <h2 class="text-2xl font-bold font-heading mt-1 mb-2 leading-tight">
+            <a class="text-ink hover:text-gold transition-colors"
                href="{{ url_for('post_page', post_id=post.id) }}">
               {{ post.title }}
             </a>
           </h2>
           
           <!-- Post Snippet -->
-          <p class="text-gray-700 dark:text-gray-300 leading-relaxed mt-1">
+          <p class="text-ink leading-relaxed mb-4 text-lg">
             {{ post.content }}
           </p>
+
+          <a href="{{ url_for('post_page', post_id=post.id)}}" class="text-sm font-bold text-navy hover:text-gold uppercase tracking-wider border-b-2 border-navy hover:border-gold transition-colors">Read Full Article &rarr;</a>
           
         </div>
       </div>
     </article>
   {% else %}
     <!-- Empty State Text -->
-    <p class="text-gray-500 dark:text-gray-400 italic">No posts by this user yet.</p>
+    <div class="bg-cream border border-brand p-8 text-center">
+      <p class="text-muted-grey italic">No posts by this user yet.</p>
+    </div>
   {% endfor %}
 {% endblock content %}

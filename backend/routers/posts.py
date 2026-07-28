@@ -15,11 +15,13 @@ router = APIRouter()
 
 
 
-@router.get("")
+@router.get("", response_model=list[PostResponse])
 async def get_posts(db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(
-        select(models.Post).options(selectinload(models.Post.author)),
+        select(models.Post).options(selectinload(models.Post.author))
+        .order_by(models.Post.date_posted.desc()),
     )
+    #  selectinload is the lazy laoding where data are alrdey loaded before the that function is callled 
     posts = result.scalars().all()
     return posts
 #  pydentic will automatically serilized author relation as user response 
@@ -133,7 +135,7 @@ async def update_post_partial(
 
 
     await db.commit()
-    await db.refresh(post)
+    await db.refresh(post, attribute_names=["author"])
     return post
 
 

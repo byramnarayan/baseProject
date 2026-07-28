@@ -1,34 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
-  {% for post in posts %}
-    <article class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm py-4 px-5 mb-4">
-        <div class="flex items-start gap-4">
-        <!-- Profile Image -->
-        <!-- The p-1 and border classes replicate the .article-img styling -->
-        <img class="rounded-full shrink-0 border border-gray-200 dark:border-gray-600 p-1 bg-white dark:bg-gray-700 object-cover"
-            src="{{post.author.image_path}}"
-            alt="{{ post.author.username }}'s profile picture"
-            width="64"
-            height="64"
-            loading="lazy">
+{% for post in posts %}
+  <article class="bg-white border border-brand rounded-none p-5 mb-6 group">
+    <div class="flex items-start gap-4">
+      <!-- Profile Image -->
+    <img class="rounded-full shrink-0 border border-brand object-cover" src="{{post.author.image_path}}"
+      alt="{{ post.author.username }}'s profile picture" width="48" height="48" loading="lazy">
 
-        <!-- Article Content -->
-        <div class="grow">
-            <!-- Metadata with bottom border replication -->
-            <div class="border-b border-gray-200 dark:border-gray-700 pb-1 mb-2">
-            <a class="mr-2 font-medium text-steel hover:underline" href="{{url_for("user_posts", user_id=post.author.id)}}">{{ post.author.username  }}</a>
-            <small class="text-sm text-gray-500 dark:text-gray-400">{{ post.date_posted.strftime('%B %d, %Y') }}</small>
-            </div>
+    <!-- Article Content -->
+    <div class="grow">
+      <!-- Metadata -->
+      <div class="mb-2 flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-muted-grey">
+        <a class="hover:text-gold transition-colors" href="{{url_for('user_posts', user_id=post.author.id)}}">{{
+          post.author.username }}</a>
+        <span>&middot;</span>
+        <span>{{ post.date_posted.strftime('%B %d, %Y') }}</span>
+        <span>&middot;</span>
+        <span>5 MIN READ</span>
+      </div>
 
-            <!-- Title -->
-            <h2 class="text-2xl mt-1 mb-2">
-            <a class="font-bold text-gray-900 dark:text-white hover:text-steel transition-colors" href="{{ url_for("post_page", post_id=post.id)}}">{{ post.title }}</a>
-            </h2>
+      <!-- Title -->
+      <h2 class="text-2xl font-bold font-heading mt-1 mb-2 leading-tight">
+        <a class="text-ink hover:text-gold transition-colors" href="{{ url_for('post_page', post_id=post.id)}}">{{
+          post.title }}</a>
+      </h2>
 
-            <!-- Content -->
-            <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{{ post.content }}</p>
-        </div>
-        </div>
-    </article>
-  {% endfor %}
+      <!-- Content -->
+      <p class="text-ink leading-relaxed mb-4 text-lg">{{ post.content }}</p>
+
+      <a href="{{ url_for('post_page', post_id=post.id)}}"
+        class="text-sm font-bold text-navy hover:text-gold uppercase tracking-wider border-b-2 border-navy hover:border-gold transition-colors">Read
+        Full Article &rarr;</a>
+    </div>
+  </div>
+</article>
+{% endfor %}
+
+<!-- Newsletter Capture Placeholder -->
+<div class="bg-cream border border-brand rounded-none p-8 mt-12 text-center">
+  <h3 class="text-2xl font-bold font-heading text-ink mb-2">Join the Community</h3>
+  <p class="text-muted-grey mb-6">Get a weekly roundup of the top news, guides, and resources.</p>
+  <form class="flex flex-col sm:flex-row justify-center max-w-md mx-auto gap-2">
+    <input type="email" placeholder="Your email address"
+      class="flex-grow text-sm border border-brand px-4 py-3 focus:outline-none focus:border-ink rounded-none bg-white">
+    <button type="button"
+      class="bg-gold text-navy hover:bg-yellow-400 px-6 py-3 rounded-none font-bold text-sm tracking-wide transition-colors whitespace-nowrap">SUBSCRIBE</button>
+  </form>
+</div>
 {% endblock content %}
