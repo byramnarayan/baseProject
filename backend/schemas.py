@@ -81,7 +81,7 @@ class PostBase(BaseModel):
     """
     title: str = Field(min_length=1, max_length=100, description="The headline of the post")
     content: str = Field(min_length=1, description="The main body text of the post")
-
+     
 
 class PostCreate(PostBase):
     """
@@ -90,8 +90,9 @@ class PostCreate(PostBase):
     Inherits all fields from PostBase. When a user creates a post, they only need
     to supply a title, content, and author. The application handles the ID and dates.
     """
+    # create the resualibae depency 
+    # use token that is genrated by the system so we can rust it
     pass
-    user_id:int #TEMP
     
 class PostUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=100, description="The headline of the post")

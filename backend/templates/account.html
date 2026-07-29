@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="max-w-2xl mx-auto bg-white border border-brand p-8 mt-8">
+    
+    <h2 class="text-3xl font-bold font-heading mb-6 text-ink border-b border-brand pb-4">Account Settings</h2>
+    
+    <!-- Profile Info Section -->
+    <div class="flex items-center gap-6 mb-8 bg-cream border border-brand p-6">
+      <img id="profileImage"
+           class="rounded-full shrink-0 border border-brand object-cover h-24 w-24"
+           src="/static/profile_pics/default.jpg"
+           alt="Profile picture">
+      <div>
+        <h5 id="displayUsername" class="text-2xl font-bold font-heading text-ink mb-1"></h5>
+        <p id="displayEmail" class="text-muted-grey text-sm font-medium"></p>
+      </div>
+    </div>
+
+    <!-- Update Profile Form -->
+    <div class="mb-8">
+      <h3 class="text-lg font-bold uppercase tracking-wider mb-4 text-ink">Update Profile</h3>
+      <form id="updateProfileForm" class="space-y-4">
+        <div>
+          <label for="username" class="block text-sm font-bold uppercase tracking-wider mb-2 text-ink">Username</label>
+          <input type="text"
+                 class="w-full border border-brand px-4 py-2 focus:outline-none focus:border-ink bg-white"
+                 id="username"
+                 name="username"
+                 required
+                 minlength="1"
+                 maxlength="50">
+        </div>
+        <div>
+          <label for="email" class="block text-sm font-bold uppercase tracking-wider mb-2 text-ink">Email</label>
+          <input type="email" 
+                 class="w-full border border-brand px-4 py-2 focus:outline-none focus:border-ink bg-white" 
+                 id="email" 
+                 name="email" 
+                 required>
+        </div>
+        <div class="pt-2">
+          <button type="submit" class="px-5 py-2 text-sm font-bold uppercase tracking-wider border border-navy text-white bg-navy hover:bg-ink transition-colors">Update Profile</button>
+        </div>
+      </form>
+    </div>
+
+    <hr class="border-brand mb-8">
+
+    <!-- Profile Picture Section (Placeholder) -->
+    <div class="mb-8 opacity-75">
+      <h3 class="text-lg font-bold uppercase tracking-wider mb-2 text-ink">Profile Picture</h3>
+      <p class="text-sm text-muted-grey mb-4">File upload coming in a future tutorial.</p>
+      <input type="file" class="w-full border border-brand px-4 py-2 bg-gray-50 text-muted-grey cursor-not-allowed" disabled>
+    </div>
+
+    <hr class="border-brand mb-8">
+
+    <!-- Password Reset Section (Placeholder) -->
+    <div class="mb-8 opacity-75">
+      <h3 class="text-lg font-bold uppercase tracking-wider mb-2 text-ink">Change Password</h3>
+      <p class="text-sm text-muted-grey mb-4">Password reset coming in a future tutorial.</p>
+      <form class="space-y-4">
+        <div>
+          <label class="block text-sm font-bold uppercase tracking-wider mb-2 text-muted-grey">Current Password</label>
+          <input type="password" class="w-full border border-brand px-4 py-2 bg-gray-50 cursor-not-allowed" disabled>
+        </div>
+        <div>
+          <label class="block text-sm font-bold uppercase tracking-wider mb-2 text-muted-grey">New Password</label>
+          <input type="password" class="w-full border border-brand px-4 py-2 bg-gray-50 cursor-not-allowed" disabled>
+        </div>
+        <div>
+          <label class="block text-sm font-bold uppercase tracking-wider mb-2 text-muted-grey">Confirm New Password</label>
+          <input type="password" class="w-full border border-brand px-4 py-2 bg-gray-50 cursor-not-allowed" disabled>
+        </div>
+        <div class="pt-2">
+          <button type="submit" class="px-5 py-2 text-sm font-bold uppercase tracking-wider border border-gray-400 text-gray-500 bg-gray-200 cursor-not-allowed" disabled>Change Password</button>
+        </div>
+      </form>
+    </div>
+
+    <hr class="border-brand mb-8">
+
+    <!-- Logout Button -->
+    <div class="mb-8">
+      <button type="button"
+              id="logoutBtn"
+              class="px-5 py-2 text-sm font-bold uppercase tracking-wider border border-brand text-ink bg-white hover:bg-cream transition-colors">
+        Logout
+      </button>
+    </div>
+
+    <hr class="border-brand mb-8">
+
+    <!-- Danger Zone -->
+    <div class="mb-4 bg-red-50 border border-red-200 p-6">
+      <h3 class="text-lg font-bold uppercase tracking-wider mb-2 text-red-600">Danger Zone</h3>
+      <p class="text-sm text-red-600/80 mb-4">
+        Once you delete your account, there is no going back. All your posts will also be permanently deleted.
+      </p>
+      <button type="button"
+              onclick="document.getElementById('deleteAccountModal').showModal()"
+              class="px-5 py-2 text-sm font-bold uppercase tracking-wider border border-red-600 text-white bg-red-600 hover:bg-red-700 transition-colors">
+        Delete Account
+      </button>
+    </div>
+  </div>
+
+  <!-- Delete Account Confirmation Modal (Native HTML Dialog) -->
+  <dialog id="deleteAccountModal"
+          class="backdrop:bg-navy/80 backdrop:backdrop-blur-sm rounded-none border border-red-600 bg-white p-0 w-full max-w-md text-ink shadow-2xl">
+    <div class="flex justify-between items-center px-6 py-4 border-b border-red-600 bg-red-600 text-white">
+      <h5 class="text-lg font-bold font-heading uppercase tracking-wide">Delete Account?</h5>
+      <button type="button" onclick="document.getElementById('deleteAccountModal').close()" class="text-white/80 hover:text-white focus:outline-none text-xl font-bold transition-colors">&times;</button>
+    </div>
+    <div class="px-6 py-6 text-lg">
+      <p>Are you sure you want to delete your account? This action cannot be undone. All your posts will be permanently deleted.</p>
+    </div>
+    <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-red-600/20">
+      <button type="button" onclick="document.getElementById('deleteAccountModal').close()" class="px-5 py-2 text-xs font-bold uppercase tracking-wider border border-brand text-ink bg-white hover:bg-cream transition-colors">Cancel</button>
+      <button type="button" id="confirmDeleteAccount" class="px-5 py-2 text-xs font-bold uppercase tracking-wider border border-red-600 text-white bg-red-600 hover:bg-red-700 transition-colors">Delete Account</button>
+    </div>
+  </dialog>
+{% endblock content %}
+
+{% block scripts %}
+  <script type="module">
+    // Import all the auth functions to manage the user session
+    import { getCurrentUser, getToken, logout, clearUserCache } from '/static/js/auth.js';
+    // Import our custom UI modals to show errors/success messages without Bootstrap
+    import { getErrorMessage, showModal, hideModal } from '/static/js/utils.js';
+
+    // We store the ID of the user globally here once we fetch it on page load
+    let currentUserId = null;
+
+    /**
+     * Initializes the account page.
+     * 
+     * How it works:
+     * 1. Fetches the currently authenticated user from the backend (or cache).
+     * 2. If nobody is logged in, immediately kicks them to the login page.
+     * 3. Fills in the UI text and image with the user's details.
+     * 4. Pre-fills the form inputs so the user sees their current email/username.
+     */
+    async function loadUserData() {
+      const user = await getCurrentUser();
+
+      // 2. Redirect to login if not authenticated
+      if (!user) {
+        window.location.href = '/login';
+        return;
+      }
+
+      currentUserId = user.id;
+
+      // 3. Populate display info
+      document.getElementById('displayUsername').textContent = user.username;
+      document.getElementById('displayEmail').textContent = user.email;
+      if (user.image_path) {
+          document.getElementById('profileImage').src = user.image_path;
+      }
+
+      // 4. Populate form fields
+      document.getElementById('username').value = user.username;
+      document.getElementById('email').value = user.email;
+    }
+
+    // -------------------------------------------------------------------------
+    // Update Profile Form Handler
+    // -------------------------------------------------------------------------
+    const updateForm = document.getElementById('updateProfileForm');
+    
+    /**
+     * Submits changes to the user's profile.
+     * 
+     * How it works:
+     * 1. Stops the browser from refreshing the page on submit.
+     * 2. Grabs the JWT token to prove we are authorized to edit this user.
+     * 3. Extracts the new username/email from the form.
+     * 4. Sends a PATCH request to FastAPI to update just those fields.
+     * 5. If successful, clears the auth cache so the new username shows up instantly!
+     */
+    updateForm.addEventListener('submit', async (event) => {
+      // 1. Prevent default form submission
+      event.preventDefault();
+
+      // 2. Auth check
+      const token = getToken();
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      // 3. Grab the data
+      const formData = new FormData(updateForm);
+      const userData = Object.fromEntries(formData.entries());
+
+      try {
+        // 4. Send PATCH request
+        const response = await fetch(`/api/users/${currentUserId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(userData),
+        });
+
+        if (response.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+
+        if (response.status === 403) {
+          document.getElementById('errorMessage').textContent = 'You are not authorized to update this profile.';
+          showModal('errorModal');
+          return;
+        }
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // 5. CRITICAL: Clear the old user cache so the next `getCurrentUser()` call 
+          // hits the API to get the shiny new username, ensuring the navbar updates!
+          clearUserCache();
+
+          // Update display instantly
+          document.getElementById('displayUsername').textContent = data.username;
+          document.getElementById('displayEmail').textContent = data.email;
+
+          document.getElementById('successMessage').textContent = 'Profile updated successfully!';
+          showModal('successModal');
+        } else {
+          const error = await response.json();
+          document.getElementById('errorMessage').textContent = getErrorMessage(error);
+          showModal('errorModal');
+        }
+      } catch (error) {
+        document.getElementById('errorMessage').textContent = 'Network error. Please check your connection and try again.';
+        showModal('errorModal');
+      }
+    });
+
+    // -------------------------------------------------------------------------
+    // Logout Handler
+    // -------------------------------------------------------------------------
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+
+    // -------------------------------------------------------------------------
+    // Delete Account Handler
+    // -------------------------------------------------------------------------
+    const deleteBtn = document.getElementById('confirmDeleteAccount');
+
+    /**
+     * Deletes the user's account forever.
+     */
+    deleteBtn.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/users/${currentUserId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+
+        if (response.status === 403) {
+          document.getElementById('errorMessage').textContent = 'You are not authorized to delete this account.';
+          hideModal('deleteAccountModal');
+          showModal('errorModal');
+          return;
+        }
+
+        if (response.status === 204) {
+          // Account deleted successfully: wipe the token and kick them to the home page!
+          localStorage.removeItem('access_token');
+          window.location.href = '/';
+        } else {
+          const error = await response.json();
+          document.getElementById('errorMessage').textContent = getErrorMessage(error);
+          hideModal('deleteAccountModal');
+          showModal('errorModal');
+        }
+      } catch (error) {
+        document.getElementById('errorMessage').textContent = 'Network error. Please check your connection and try again.';
+        showModal('errorModal');
+      }
+    });
+
+    // Fire the initial load when the script runs
+    loadUserData();
+  </script>
+{% endblock scripts %}

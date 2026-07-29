@@ -194,8 +194,7 @@ async def user_posts_page(
         "user_posts.html",
         {"posts": posts, "user": user, "title": f"{user.username}'s Posts"},
     )
-## logi
-# n and register template_routes
+## login and register template_routes
 @app.get("/login", include_in_schema=False)
 async def login_page(request: Request):
     return templates.TemplateResponse(
@@ -215,6 +214,13 @@ async def register_page(request: Request):
 
 
 
+@app.get("/account", include_in_schema=False)
+async def account_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "account.html",
+        {"title": "account"},
+    )
 
 
 

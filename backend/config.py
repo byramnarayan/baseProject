@@ -2,6 +2,7 @@
 from pydantic import SecretStr
 #  for password and things like that 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+# same as .env variable 
 
 
 class Settings(BaseSettings):
@@ -11,8 +12,14 @@ class Settings(BaseSettings):
     )
 
     secret_key: SecretStr
-    algorithm: str = "HS256"
+    algorithm: str = "HS256" # stdandard for jwt 
     access_token_expire_minutes: int = 30
 
 
 settings = Settings()  # type: ignore[call-arg] # Loaded from .env file``
+
+
+
+
+# comes from env varivarable 
+# from .env  

@@ -16,10 +16,11 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 
 from auth import (
+    CurrentUser,
     create_access_token,
     hash_password,
-    oauth2_scheme,
-    verify_access_token,
+    # oauth2_scheme,
+    # verify_access_token,
     verify_password,
 )
 
@@ -40,7 +41,7 @@ async def create_user(user: UserCreate, db: Annotated[AsyncSession, Depends(get_
             select(models.User).where(
             func.lower(models.User.username) == user.username.lower()
         ))
-        # "RamM"="Ram" check 
+        # "RamM"="ramm" check 
         # there user.username is from function parameter 
 
     # check user name alrady exists 
@@ -109,42 +110,46 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 # "/me": so frontend get he current user 
+# @router.get("/me", response_model=UserPrivate)
+# async def get_current_user(
+#     token: Annotated[str, Depends(oauth2_scheme)],
+#     #  oauth2_scheme : extract the token from authrization header
+#     db: Annotated[AsyncSession, Depends(get_db)],
+# ):
+#     """verfiy user and get Get the currently authenticated user id."""
+#     user_id = verify_access_token(token)
+#     if user_id is None:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Invalid or expired token",
+#             headers={"WWW-Authenticate": "Bearer"},
+#         )
+
+#     # Validate user_id is a valid integer (defense against malformed JWT)
+#     try:
+#         user_id_int = int(user_id)
+#     except (TypeError, ValueError):
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Invalid or expired token",
+#             headers={"WWW-Authenticate": "Bearer"},
+#         )
+# #  everthing check out look up user and get he user data 
+#     result = await db.execute(
+#         select(models.User).where(models.User.id == user_id_int),
+#     )
+#     user = result.scalars().first()
+#     if not user:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="User not found",
+#             headers={"WWW-Authenticate": "Bearer"},
+#         )
+#     return user
+
 @router.get("/me", response_model=UserPrivate)
-async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    #  oauth2_scheme : extract the token from authrization header
-    db: Annotated[AsyncSession, Depends(get_db)],
-):
-    """verfiy user and get Get the currently authenticated user."""
-    user_id = verify_access_token(token)
-    if user_id is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    # Validate user_id is a valid integer (defense against malformed JWT)
-    try:
-        user_id_int = int(user_id)
-    except (TypeError, ValueError):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    result = await db.execute(
-        select(models.User).where(models.User.id == user_id_int),
-    )
-    user = result.scalars().first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return user
+async def get_current_user(current_user:CurrentUser):
+    return current_user
 
 
 
@@ -186,8 +191,17 @@ async def update_user(
     user_id: int,
     user_update: UserUpdate,
     #  validate the model people are trying to update the model in database 
+    current_user: CurrentUser,
     db: Annotated[AsyncSession, Depends(get_db)],
     ):
+
+    # post ownership check   
+    if user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to update this USer",
+        )  
+
     result = await db.execute(select(models.User).where(models.User.id == user_id))
     user = result.scalars().first()
     if not user:
@@ -208,7 +222,7 @@ async def update_user(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Username already exists",
             )
-
+#  usr validation 
     if user_update.email is not None and user_update.email.lower() != user.email.lower():
         result = await db.execute(
                     select(models.User).where(
@@ -234,9 +248,15 @@ async def update_user(
 
 ## delete_user
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(user_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
+async def delete_user(user_id: int, current_user:CurrentUser ,db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(select(models.User).where(models.User.id == user_id))
     user = result.scalars().first()
+    # post ownership check   
+    if user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to delete this user ",
+        )  
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
