@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+/**
+ * Design Tokens Configuration
+ * 
+ * In Tailwind v4, we configure our custom tokens using CSS custom properties 
+ * inside the @theme block, rather than a tailwind.config.ts file.
+ * 
+ * These tokens are derived directly from the legacy `main.css` and `design.md` files
+ * to ensure 100% aesthetic continuity.
+ */
+
+@theme inline {
+  /* Colors mapping exactly to legacy variables */
+  --color-navy: #0B1B33;
+  --color-gold: #F2B807;
+  --color-cream: #F7EFE1;
+  --color-ink: #12213B;
+  --color-muted-grey: #6B7280;
+  --color-success-green: #2F855A;
+  
+  /* Additional legacy colors */
+  --color-steel: #468432;
+  --color-light-green: #9AD872;
+  --color-warm: #FFEF91;
+  --color-accent: #FFA02E;
+  
+  /* UI Element colors */
+  --color-brand-border: rgba(18, 33, 59, 0.12);
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+
+  /* Fonts */
+  --font-heading: 'Montserrat', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+
+  /* Global configurations */
+  --radius-card: 0px; /* Force sharp corners as per design spec */
+}
+
+/* Base structural overrides to maintain legacy styling */
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-ink);
+  }
+
+  /* Sharp default focus ring matching legacy a:focus-visible */
+  *:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+
+/* Utilities for heavily used legacy classes */
+@layer utilities {
+  .border-hairline {
+    border: 1px solid var(--color-brand-border);
+  }
+  
+  .card-shadow-hover {
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  
+  .card-shadow-hover:hover {
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+    border-color: var(--color-light-green);
+  }
+}
