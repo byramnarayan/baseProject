@@ -14,7 +14,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import select
+from sqlalchemy import select,func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 # selectinload: eager loading relationship which is super imporant 
@@ -29,10 +29,11 @@ from sqlalchemy.orm import selectinload
 # that in just a second.
 # query wehere need realtionshio used eager loading 
 
+from config import settings
 
 
 import models
-from database import Base, engine, get_db
+from database import engine, get_db
 from routers import posts,users
 
 
@@ -43,9 +44,12 @@ from routers import posts,users
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # Startup
-    async with engine.begin() as conn:
+    # async with engine.begin() as conn: # removed for postgress
         # engine.begin: get async connection
-        await conn.run_sync(Base.metadata.create_all)
+        # await conn.run_sync(Base.metadata.create_all) # removed for postgress
+        # create_all : is problem when add the new database table to update the change need to delete the entire table 
+        # solution: apply the migrations 
+        # migrations: tink like git move forward and backwrod thrugh out history 
         # run_sync: let us run sync create call method inside async context
     yield # there application acutally runs 
     # Shutdown
@@ -89,7 +93,7 @@ app.add_middleware(
 # 
 # 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/media", StaticFiles(directory="media"), name="media")
+# app.mount("/media", StaticFiles(directory="media"), name="media") # removed after aws 
 
 templates = Jinja2Templates(directory="templates")
 
@@ -100,56 +104,81 @@ app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(posts.router, prefix="/api/posts", tags=["posts"])
 
 
-
-
+## home route - paginated
 @app.get("/", include_in_schema=False, name="home")
-# given name="home" so {{ url_for('home') }} use explict name when apply two const.
-async def home(request: Request, db: Annotated[AsyncSession, Depends(get_db)]):# request parameter as argument because Jinja2 required that
-    result = await db.execute(select(models.Post)
-    .options(selectinload(models.Post.author))
-    .order_by(models.Post.date_posted.desc())
+async def home(request: Request, db: Annotated[AsyncSession, Depends(get_db)]):
+    count_result = await db.execute(select(func.count()).select_from(models.Post))
+    total = count_result.scalar() or 0
+
+    result = await db.execute(
+        select(models.Post)
+        .options(selectinload(models.Post.author))
+        .order_by(models.Post.date_posted.desc())
+        .limit(settings.posts_per_page),
     )
-    # options: this is eager loading
     posts = result.scalars().all()
 
-    # by doing this we get our post from database
+    has_more = len(posts) < total
+
     return templates.TemplateResponse(
-        request, # need jinja2 to work
-        "home.html",#name of template file
-        {"posts": posts, "title": "Home"},
-        # context dict: contain all of variable that will be use in frontend
-        # template can acess anything that is in that context
-        # jinja3 let us acess dict key as dot notation, which is clean way to do in our template
-        # IF STATEMENT{% for post in posts%}
-        #             {% endfor %}
-        # CONDITION STATMENT {% if title%}
-        #                    {% else %}
-        #                    {% endif %}
-        # BLOCK CONTENT ->layout.html
-        #{% block content %}
-        #{% endblock content %}
-        # home.html
-        # {% extends layout.html%}
-        # {% block content %}
-        # code
-        # {% endblock content%}
-        # ********
-        # Route Links:
-            # passing **** def home(): function name
-            # To generate links to specific pages in your navigation (e.g., {{ url_for('home') }})
-        # Static Files:
-            # To link to CSS, JavaScript, or images.
-            # You reference the name you gave your static directory during mounting
-            # (e.g., {{ url_for('static', path='css/main.css') }})
-            # 
-            # 
-            # 
-        #  need to change the template after adding the database for new relationship data 
-        # home.html, post.html need to chnage how we display date and author
-        # becaus author is now object
-        # so  post.author  become  post.author.username 
-        # date is datetime object 
+        request,
+        "home.html",
+        {
+            "posts": posts,
+            "title": "Home",
+            "limit": settings.posts_per_page,
+            "has_more": has_more,
+        },
     )
+
+# @app.get("/", include_in_schema=False, name="home")
+# # given name="home" so {{ url_for('home') }} use explict name when apply two const.
+# async def home(request: Request, db: Annotated[AsyncSession, Depends(get_db)]):# request parameter as argument because Jinja2 required that
+#     result = await db.execute(select(models.Post)
+#     .options(selectinload(models.Post.author))
+#     .order_by(models.Post.date_posted.desc())
+#     )
+#     # options: this is eager loading
+#     posts = result.scalars().all()
+
+#     # by doing this we get our post from database
+#     return templates.TemplateResponse(
+#         request, # need jinja2 to work
+#         "home.html",#name of template file
+#         {"posts": posts, "title": "Home"},
+#         # context dict: contain all of variable that will be use in frontend
+#         # template can acess anything that is in that context
+#         # jinja3 let us acess dict key as dot notation, which is clean way to do in our template
+#         # IF STATEMENT{% for post in posts%}
+#         #             {% endfor %}
+#         # CONDITION STATMENT {% if title%}
+#         #                    {% else %}
+#         #                    {% endif %}
+#         # BLOCK CONTENT ->layout.html
+#         #{% block content %}
+#         #{% endblock content %}
+#         # home.html
+#         # {% extends layout.html%}
+#         # {% block content %}
+#         # code
+#         # {% endblock content%}
+#         # ********
+#         # Route Links:
+#             # passing **** def home(): function name
+#             # To generate links to specific pages in your navigation (e.g., {{ url_for('home') }})
+#         # Static Files:
+#             # To link to CSS, JavaScript, or images.
+#             # You reference the name you gave your static directory during mounting
+#             # (e.g., {{ url_for('static', path='css/main.css') }})
+#             # 
+#             # 
+#             # 
+#         #  need to change the template after adding the database for new relationship data 
+#         # home.html, post.html need to chnage how we display date and author
+#         # becaus author is now object
+#         # so  post.author  become  post.author.username 
+#         # date is datetime object 
+#     )
 
 @app.get("/posts/{post_id}", include_in_schema=False)
 async def post_page(request: Request, post_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
@@ -175,24 +204,41 @@ async def user_posts_page(
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     result = await db.execute(select(models.User).where(models.User.id == user_id))
-    # it does not need becuse we are not acessing any relation in objects 
     user = result.scalars().first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found",
         )
+
+    count_result = await db.execute(
+        select(func.count())
+        .select_from(models.Post)
+        .where(models.Post.user_id == user_id),
+    )
+    total = count_result.scalar() or 0
+
     result = await db.execute(
         select(models.Post)
         .options(selectinload(models.Post.author))
         .where(models.Post.user_id == user_id)
         .order_by(models.Post.date_posted.desc())
+        .limit(settings.posts_per_page),
     )
     posts = result.scalars().all()
+
+    has_more = len(posts) < total
+
     return templates.TemplateResponse(
         request,
         "user_posts.html",
-        {"posts": posts, "user": user, "title": f"{user.username}'s Posts"},
+        {
+            "posts": posts,
+            "user": user,
+            "title": f"{user.username}'s Posts",
+            "limit": settings.posts_per_page,
+            "has_more": has_more,
+        },
     )
 ## login and register template_routes
 @app.get("/login", include_in_schema=False)
@@ -222,6 +268,38 @@ async def account_page(request: Request):
         {"title": "account"},
     )
 
+
+
+
+## main.py template routes
+@app.get("/forgot-password", include_in_schema=False)
+async def forgot_password_page(request: Request):
+    """
+    Renders the forgot password page where users can input their email.
+    We pass "title" to the template context to update the browser tab title.
+    """
+    return templates.TemplateResponse(
+        request,
+        "forgot_password.html",
+        {"title": "Forgot Password"},
+    )
+
+
+@app.get("/reset-password", include_in_schema=False)
+async def reset_password_page(request: Request):
+    """
+    Renders the reset password page where users input their new password.
+    This page is accessed via a link sent in an email, which contains a secret token in the URL.
+    """
+    response = templates.TemplateResponse(
+        request,
+        "reset_password.html",
+        {"title": "Reset Password"},
+    )
+    # Security Measure: Prevent the browser from sending the secret token in the URL 
+    # to other external sites the user might click on from this page.
+    response.headers["Referrer-Policy"] = "no-referrer"
+    return response
 
 
 

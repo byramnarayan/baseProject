@@ -46,34 +46,47 @@
 
     <hr class="border-brand mb-8">
 
-    <!-- Profile Picture Section (Placeholder) -->
-    <div class="mb-8 opacity-75">
-      <h3 class="text-lg font-bold uppercase tracking-wider mb-2 text-ink">Profile Picture</h3>
-      <p class="text-sm text-muted-grey mb-4">File upload coming in a future tutorial.</p>
-      <input type="file" class="w-full border border-brand px-4 py-2 bg-gray-50 text-muted-grey cursor-not-allowed" disabled>
+    <!-- Profile Picture Section -->
+    <div class="mb-8">
+      <h3 class="text-lg font-bold uppercase tracking-wider mb-4 text-ink">Profile Picture</h3>
+      <!-- Preview container -->
+      <div class="mb-4">
+        <img id="imagePreview"
+             class="hidden rounded-full border border-brand object-cover h-32 w-32"
+             alt="Image preview">
+      </div>
+      <!-- File input and upload button -->
+      <div class="flex items-start gap-4 mb-2">
+        <input type="file"
+               class="w-full border border-brand px-4 py-2 focus:outline-none focus:border-ink bg-white file:mr-4 file:py-2 file:px-4 file:rounded-none file:border-0 file:text-sm file:font-bold file:uppercase file:tracking-wider file:bg-navy file:text-white hover:file:bg-ink file:cursor-pointer transition-colors"
+               id="pictureInput"
+               accept="image/*">
+        <button type="button" class="px-5 py-2 text-sm font-bold uppercase tracking-wider border border-navy text-white bg-navy hover:bg-ink transition-colors disabled:opacity-50 disabled:cursor-not-allowed h-[42px] whitespace-nowrap" id="uploadPictureBtn" disabled>Upload</button>
+      </div>
+      <p class="text-sm text-muted-grey">Maximum file size: 5MB. Supported formats: JPEG, PNG, GIF, WebP.</p>
     </div>
 
     <hr class="border-brand mb-8">
 
-    <!-- Password Reset Section (Placeholder) -->
-    <div class="mb-8 opacity-75">
-      <h3 class="text-lg font-bold uppercase tracking-wider mb-2 text-ink">Change Password</h3>
-      <p class="text-sm text-muted-grey mb-4">Password reset coming in a future tutorial.</p>
-      <form class="space-y-4">
+    <!-- Change Password Section -->
+    <div class="mb-8">
+      <h3 class="text-lg font-bold uppercase tracking-wider mb-4 text-ink">Change Password</h3>
+      <form id="changePasswordForm" class="space-y-4">
         <div>
-          <label class="block text-sm font-bold uppercase tracking-wider mb-2 text-muted-grey">Current Password</label>
-          <input type="password" class="w-full border border-brand px-4 py-2 bg-gray-50 cursor-not-allowed" disabled>
+          <label for="currentPassword" class="block text-sm font-bold uppercase tracking-wider mb-2 text-ink">Current Password</label>
+          <input type="password" class="w-full border border-brand px-4 py-2 focus:outline-none focus:border-ink bg-white" id="currentPassword" name="current_password" required>
         </div>
         <div>
-          <label class="block text-sm font-bold uppercase tracking-wider mb-2 text-muted-grey">New Password</label>
-          <input type="password" class="w-full border border-brand px-4 py-2 bg-gray-50 cursor-not-allowed" disabled>
+          <label for="newPassword" class="block text-sm font-bold uppercase tracking-wider mb-2 text-ink">New Password</label>
+          <input type="password" class="w-full border border-brand px-4 py-2 focus:outline-none focus:border-ink bg-white" id="newPassword" name="new_password" required minlength="8">
+          <p class="text-xs text-muted-grey mt-1">Password must be at least 8 characters.</p>
         </div>
         <div>
-          <label class="block text-sm font-bold uppercase tracking-wider mb-2 text-muted-grey">Confirm New Password</label>
-          <input type="password" class="w-full border border-brand px-4 py-2 bg-gray-50 cursor-not-allowed" disabled>
+          <label for="confirmNewPassword" class="block text-sm font-bold uppercase tracking-wider mb-2 text-ink">Confirm New Password</label>
+          <input type="password" class="w-full border border-brand px-4 py-2 focus:outline-none focus:border-ink bg-white" id="confirmNewPassword" name="confirm_new_password" required minlength="8">
         </div>
         <div class="pt-2">
-          <button type="submit" class="px-5 py-2 text-sm font-bold uppercase tracking-wider border border-gray-400 text-gray-500 bg-gray-200 cursor-not-allowed" disabled>Change Password</button>
+          <button type="submit" class="px-5 py-2 text-sm font-bold uppercase tracking-wider border border-navy text-white bg-navy hover:bg-ink transition-colors" id="changePasswordBtn">Change Password</button>
         </div>
       </form>
     </div>
@@ -165,6 +178,136 @@
     }
 
     // -------------------------------------------------------------------------
+    // Image Preview Handler
+    // -------------------------------------------------------------------------
+    const pictureInput = document.getElementById('pictureInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadBtn = document.getElementById('uploadPictureBtn');
+
+    /**
+     * Handles previewing the selected image before uploading.
+     * 
+     * How it works:
+     * 1. Listens for the 'change' event on the file input (when a user selects a file).
+     * 2. Uses the native `FileReader` API to read the file into a base64 Data URL.
+     * 3. Sets the `src` of the preview image to this Data URL and removes the 'hidden' class to show it.
+     * 4. Enables the Upload button once a valid file is selected.
+     */
+    pictureInput.addEventListener('change', (event) => {
+      // 1. Get the first selected file
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        
+        // 2. Define what happens when the file is fully read
+        reader.onload = (e) => {
+          // 3. Inject the preview and show the element
+          imagePreview.src = e.target.result;
+          imagePreview.classList.remove('hidden'); // Tailwind 'hidden' removal
+        };
+        
+        // 4. Start reading the file
+        reader.readAsDataURL(file);
+
+        // 5. Enable the upload button
+        uploadBtn.disabled = false;
+      } else {
+        // If the user cancelled the file dialog, hide the preview and disable the button
+        imagePreview.classList.add('hidden');
+        uploadBtn.disabled = true;
+      }
+    });
+
+    // -------------------------------------------------------------------------
+    // Upload Profile Picture Handler
+    // -------------------------------------------------------------------------
+    /**
+     * Uploads the selected profile picture to the backend.
+     * 
+     * How it works:
+     * 1. Grabs the JWT token and the selected file.
+     * 2. Packs the file into a `FormData` object (crucial for multipart/form-data file uploads).
+     * 3. Sends a PATCH request to the FastAPI picture endpoint. Note that we do NOT set the 'Content-Type' header here, 
+     *    the browser will automatically set it to 'multipart/form-data' with the correct boundary!
+     * 4. If successful, clears the user cache, updates the main profile image, and hides the preview.
+     */
+    uploadBtn.addEventListener('click', async () => {
+      // 1. Auth check
+      const token = getToken();
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      // 2. Grab the file
+      const file = pictureInput.files[0];
+      if (!file) {
+        return; // Nothing to upload
+      }
+
+      // 3. Use FormData for file uploads (NOT JSON like the other endpoints)
+      const formData = new FormData();
+      formData.append('file', file); // The backend expects a field named 'file'
+
+      // Disable button and show loading state
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = 'Uploading...';
+
+      try {
+        // 4. Send PATCH request
+        const response = await fetch(`/api/users/${currentUserId}/picture`, {
+          method: 'PATCH',
+          headers: {
+            // WARNING: Do not set Content-Type manually here! 
+            // The browser will generate the correct multipart boundary automatically.
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (response.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+
+        if (response.status === 403) {
+          document.getElementById('errorMessage').textContent = 'You are not authorized to update this profile picture.';
+          showModal('errorModal');
+          return;
+        }
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // 5. CRITICAL: Clear cache so navbar picks up the new picture on next load
+          clearUserCache();
+
+          // Update the main profile image display
+          document.getElementById('profileImage').src = data.image_path;
+
+          // Reset the form
+          pictureInput.value = '';
+          imagePreview.classList.add('hidden');
+
+          document.getElementById('successMessage').textContent = 'Profile picture updated successfully!';
+          showModal('successModal');
+        } else {
+          // Handle backend validation errors (e.g. file too large)
+          const error = await response.json();
+          document.getElementById('errorMessage').textContent = getErrorMessage(error);
+          showModal('errorModal');
+        }
+      } catch (error) {
+        document.getElementById('errorMessage').textContent = 'Network error. Please check your connection and try again.';
+        showModal('errorModal');
+      } finally {
+        // Reset the upload button state
+        uploadBtn.disabled = pictureInput.files.length === 0;
+        uploadBtn.textContent = 'Upload';
+      }
+    });
+
+    // -------------------------------------------------------------------------
     // Update Profile Form Handler
     // -------------------------------------------------------------------------
     const updateForm = document.getElementById('updateProfileForm');
@@ -237,6 +380,84 @@
       } catch (error) {
         document.getElementById('errorMessage').textContent = 'Network error. Please check your connection and try again.';
         showModal('errorModal');
+      }
+    });
+
+    // -------------------------------------------------------------------------
+    // Change Password Handler
+    // -------------------------------------------------------------------------
+    const changePasswordForm = document.getElementById('changePasswordForm');
+    const changePasswordBtn = document.getElementById('changePasswordBtn');
+
+    /**
+     * Handles changing a user's password while they are logged in.
+     */
+    changePasswordForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      // 1. Verify we still have our auth token
+      const token = getToken();
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+      // 2. Client-side password matching validation
+      if (newPassword !== confirmNewPassword) {
+        document.getElementById('errorMessage').textContent = 'New passwords do not match.';
+        showModal('errorModal');
+        return;
+      }
+
+      // Disable button during submission
+      changePasswordBtn.disabled = true;
+      changePasswordBtn.textContent = 'CHANGING...';
+
+      try {
+        // 3. Send the PATCH request to our backend
+        const response = await fetch('/api/users/me/password', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            // ALWAYS pass the Bearer token for protected routes!
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            current_password: currentPassword,
+            new_password: newPassword,
+          }),
+        });
+
+        // Token expired/invalid
+        if (response.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+
+        if (response.ok) {
+          // Success! 
+          changePasswordForm.reset();
+
+          document.getElementById('successMessage').textContent = 'Password changed successfully!';
+          showModal('successModal');
+        } else {
+          // Backend validation failed (e.g., current password incorrect)
+          const error = await response.json();
+          document.getElementById('errorMessage').textContent = getErrorMessage(error);
+          showModal('errorModal');
+        }
+      } catch (error) {
+        document.getElementById('errorMessage').textContent =
+          'Network error. Please check your connection and try again.';
+        showModal('errorModal');
+      } finally {
+        // Re-enable button
+        changePasswordBtn.disabled = false;
+        changePasswordBtn.textContent = 'CHANGE PASSWORD';
       }
     });
 

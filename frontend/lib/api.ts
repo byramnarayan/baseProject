@@ -61,8 +61,8 @@ export async function apiFetch<T>(endpoint: string, options: FetchOptions = {}):
   
   const headers = new Headers(customHeaders);
   
-  // Ensure we send and accept JSON by default, unless otherwise specified
-  if (!headers.has('Content-Type')) {
+  // Ensure we send and accept JSON by default, unless otherwise specified (like FormData)
+  if (!headers.has('Content-Type') && !(restOptions.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }
 

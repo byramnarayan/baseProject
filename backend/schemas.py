@@ -56,7 +56,6 @@ class UserPublic(BaseModel):
     image_path: str
     # image_path define in model it is not database col from_attributes let read that attribute 
 
-
 class UserPrivate(UserPublic):
     email:EmailStr
     
@@ -64,8 +63,8 @@ class UserPrivate(UserPublic):
 class UserUpdate(BaseModel):
     username: str | None= Field(default=None,min_length=1, max_length=50)
     email: EmailStr | None = Field(default=None, max_length=120)
-    image_file: str | None= Field(default=None,min_length=1, max_length=500)
-
+#  need to lock this other user with PATCH endpoint can replace string to enter there image 
+#  Profile picture should change only uplaod and delete end point 
 
 #  need token schema for login responses
 class Token(BaseModel):
@@ -116,6 +115,7 @@ class PostResponse(PostBase):
         id: int #scope to classs not give any linter worning
         user_id:int
         date_posted: datetime
+        likes: int
         author: UserPublic #get nested user id, email, and other in json response
 
 
@@ -124,3 +124,42 @@ class PostResponse(PostBase):
     #pydentic alresay how to read data from dic by doing this it will allow how to read  object using dot notations data from database
     #when add database data will be going to acess through post.title
     #field that we want in respone but not provied by client
+
+
+    
+## Paginated Post Response Schema
+class PaginatedPostsResponse(BaseModel):
+    posts: list[PostResponse]
+    total: int
+    skip: int
+    limit: int
+    has_more: bool
+
+## Password Reset Schemas
+class ForgotPasswordRequest(BaseModel):
+    """
+    Schema for step 1 of password reset: The user submits their email.
+    Pydantic's EmailStr automatically validates that the input is a properly formatted email address.
+    """
+    email: EmailStr = Field(max_length=120)
+
+
+class ResetPasswordRequest(BaseModel):
+    """
+    Schema for step 2 of password reset: The user submits the token (from their email link) 
+    and their desired new password.
+    """
+    # The raw token extracted from the URL query parameter
+    token: str
+    
+    # The new password, strictly validated to be at least 8 characters long for security
+    new_password: str = Field(min_length=8)
+
+
+class ChangePasswordRequest(BaseModel):
+    """
+    Schema for changing a password when a user is already logged in.
+    They must provide their current password to prove their identity, along with the new password.
+    """
+    current_password: str
+    new_password: str = Field(min_length=8)

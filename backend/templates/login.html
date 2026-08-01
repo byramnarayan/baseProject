@@ -28,9 +28,14 @@
         <button type="submit" class="w-full px-5 py-3 text-sm font-bold uppercase tracking-wider border border-navy text-white bg-navy hover:bg-ink transition-colors">Login</button>
       </div>
     </form>
-    <p class="mt-6 text-sm text-center text-muted-grey">
+    <div class="mt-6 text-sm text-center text-muted-grey space-y-2">
+      <p>
+        <a href="{{ url_for('forgot_password_page') }}" class="font-bold text-navy hover:text-gold transition-colors">Forgot your password?</a>
+      </p>
+      <p>
         Don't have an account? <a href="{{ url_for('register_page') }}" class="font-bold text-navy hover:text-gold transition-colors">Register here</a>
-    </p>
+      </p>
+    </div>
   </div>
 {% endblock content %}
 

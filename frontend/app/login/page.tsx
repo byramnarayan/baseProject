@@ -92,9 +92,14 @@ export default function LoginPage() {
         </div>
       </form>
       
-      <p className="mt-6 text-sm text-center text-muted-grey">
-        Don&apos;t have an account? <Link href="/register" className="font-bold text-navy hover:text-gold transition-colors">Register here</Link>
-      </p>
+      <div className="mt-6 text-sm text-center text-muted-grey space-y-2">
+        <p>
+          <Link href="/forgot-password" className="font-bold text-navy hover:text-gold transition-colors">Forgot your password?</Link>
+        </p>
+        <p>
+          Don&apos;t have an account? <Link href="/register" className="font-bold text-navy hover:text-gold transition-colors">Register here</Link>
+        </p>
+      </div>
     </div>
   );
 }

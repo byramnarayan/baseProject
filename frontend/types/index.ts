@@ -33,3 +33,11 @@ export interface AuthTokens {
 export interface ApiError {
   detail: string | { loc: string[]; msg: string; type: string }[];
 }
+
+export interface PaginatedPostsResponse {
+  posts: Post[];
+  total: number;
+  skip: number;
+  limit: number;
+  has_more: boolean;
+}

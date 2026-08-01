@@ -16,6 +16,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 import models
 from database import get_db
+
+
+import hashlib
+import secrets
 # setup password hasher: create password hash with aegon2 with recommed settings piwlib[argon2]
 password_hash = PasswordHash.recommended()
 
@@ -36,6 +40,23 @@ def hash_password(password: str) -> str:
 # verify 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return password_hash.verify(plain_password, hashed_password)
+
+# genrate password reset token 
+def generate_reset_token() -> str:
+    """
+    Generates a cryptographically secure random string to be used as a one-time password reset token.
+    secrets.token_urlsafe(32) creates a URL-safe base64-encoded string, which is perfect for emailing as a link.
+    """
+    return secrets.token_urlsafe(32)
+
+
+def hash_reset_token(token: str) -> str:
+    """
+    Hashes the raw token using SHA-256 before storing it in the database.
+    We don't use bcrypt/argon2 here because tokens are highly random (high entropy), 
+    so they aren't susceptible to dictionary attacks. SHA-256 is much faster and perfectly safe for this use case.
+    """
+    return hashlib.sha256(token.encode()).hexdigest()
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:

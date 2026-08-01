@@ -31,6 +31,16 @@
     <p class="text-ink leading-relaxed text-lg mb-8">{{ post.content }}</p>
   </div>
 
+  <!-- Like Button -->
+  <div class="mt-4 flex items-center gap-2">
+    <button onclick="likePost({{ post.id }})" class="flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase tracking-wider border border-brand text-ink bg-white hover:bg-cream transition-colors group">
+      <svg class="w-5 h-5 text-muted-grey group-hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+      </svg>
+      Like <span id="likeCount-{{ post.id }}">{{ post.likes }}</span>
+    </button>
+  </div>
+
   <!-- Post Actions (Hidden by default, shown via JS if owner) -->
   <div id="postActions" class="hidden mt-8 pt-6 border-t border-brand flex gap-4">
 
@@ -271,6 +281,37 @@
       showModal('errorModal');
     }
   });
+
+  // -------------------------------------------------------------------------
+  // Like Post Handler
+  // -------------------------------------------------------------------------
+  window.likePost = async function(id) {
+    const token = getToken();
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${id}/like`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      if (response.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update the like count dynamically
+        document.getElementById(`likeCount-${id}`).textContent = data.likes;
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
+  };
 
   // Run the ownership check immediately when the script loads
   checkOwnership();

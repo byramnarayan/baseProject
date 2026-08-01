@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import DeclarativeBase
 # from sqlalchemy import create_engine
 # from sqlalchemy.orm import DeclarativeBase, sessionmaker
-
+from config import  settings
 notes="""
 [ Fresh HTTP Client Request ]
                │
@@ -69,14 +69,37 @@ notes="""
 
 
 # Tells SQLAlchemy exactly where to find or create the database file
-SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./blog.db"
+# SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./blog.db"
+
+
+
+
+# =========== ALEMBIC ============  
+# uv run alembic init -t async  alembic
+# -t: tell ala=emic to use async templege
+
+
+#  need to upadet alembic.ini for database connection
+# sqlalchemy.url
+#  alembic/env.py meta data and async setup
+
+
+# uv run alembic revision --autogenerate -m "initial schema"
+
+# autogenrate: tells model look at database and 
+# compare auto matically genrate migration file for us 
+# REMEBER: only create file not apply migrations need to create seprate file 
+
+
 
 # Create the core engine manager
 engine = create_async_engine(
-    SQLALCHEMY_DATABASE_URL,
+    # database_url: get this from the .env database url 
+    settings.database_url
+    # SQLALCHEMY_DATABASE_URL, # not need for postgress
     # check_same_thread=False is strictly required ONLY for SQLite.
     # It allows multiple background asynchronous threads to access the database safely.
-    connect_args={"check_same_thread": False},
+    # connect_args={"check_same_thread": False}, # not need for postgress
 )
 
 # Factory configuration for generating individual database transactions.

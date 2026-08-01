@@ -1,80 +1,37 @@
 import Link from 'next/link';
-import { Post } from '@/types';
+import { Post, PaginatedPostsResponse } from '@/types';
 import { apiFetch } from '@/lib/api';
+import PostList from '@/components/PostList';
 
 // This function runs on the Next.js server, exactly like your old FastAPI route
-async function getPosts(): Promise<Post[]> {
+async function getPosts(): Promise<PaginatedPostsResponse> {
   try {
     // In a server component, we fetch from the backend URL
     // We pass skipAuth: true because this is public data
-    const res = await apiFetch<(Omit<Post, 'created_at'> & { date_posted?: string })[]>('/api/posts', { skipAuth: true, cache: 'no-store' });
-    return res.map(p => ({
+    type ApiPost = Omit<Post, 'created_at'> & { date_posted?: string };
+    type ApiPaginatedResponse = Omit<PaginatedPostsResponse, 'posts'> & { posts: ApiPost[] };
+    
+    const res = await apiFetch<ApiPaginatedResponse>('/api/posts?skip=0&limit=10', { skipAuth: true, cache: 'no-store' });
+    
+    // Map backend `date_posted` to frontend `created_at`
+    const mappedPosts = res.posts.map(p => ({
       ...p,
       created_at: p.date_posted || (p as unknown as Post).created_at
     })) as Post[];
+    
+    return { ...res, posts: mappedPosts };
   } catch (error) {
     console.error("Failed to fetch posts:", error);
-    return [];
+    return { posts: [], total: 0, skip: 0, limit: 10, has_more: false };
   }
 }
 
 export default async function Home() {
-  const posts = await getPosts();
+  const paginatedData = await getPosts();
 
   return (
     <>
-      {posts.map((post) => (
-        <article key={post.id} className="bg-white border border-brand rounded-none p-5 mb-6 group card-shadow-hover">
-          <div className="flex items-start gap-4">
-            
-            {/* Profile Image */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            {post.author.image_path ? (
-               <img 
-                 className="rounded-full shrink-0 border border-brand object-cover" 
-                 src={post.author.image_path} 
-                 alt={`${post.author.username}'s profile`} 
-                 width={48} 
-                 height={48} 
-                 loading="lazy" 
-               />
-            ) : (
-               <div className="w-12 h-12 rounded-full shrink-0 border border-brand bg-cream flex items-center justify-center text-navy font-bold text-xl uppercase">
-                 {post.author.username.charAt(0)}
-               </div>
-            )}
-
-            {/* Article Content */}
-            <div className="grow">
-              
-              {/* Metadata */}
-              <div className="mb-2 flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-muted-grey">
-                <Link className="hover:text-gold transition-colors" href={`/user/${post.author.id}`}>
-                  {post.author.username}
-                </Link>
-                <span>&middot;</span>
-                <span>{new Date(post.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })}</span>
-                <span>&middot;</span>
-                <span>5 MIN READ</span>
-              </div>
-
-              {/* Title */}
-              <h2 className="text-2xl font-bold font-heading mt-1 mb-2 leading-tight">
-                <Link className="text-ink hover:text-gold transition-colors" href={`/post/${post.id}`}>
-                  {post.title}
-                </Link>
-              </h2>
-
-              {/* Content */}
-              <p className="text-ink leading-relaxed mb-4 text-lg line-clamp-3">{post.content}</p>
-
-              <Link href={`/post/${post.id}`} className="text-sm font-bold text-navy hover:text-gold uppercase tracking-wider border-b-2 border-navy hover:border-gold transition-colors">
-                Read Full Article &rarr;
-              </Link>
-            </div>
-          </div>
-        </article>
-      ))}
+      <PostList initialData={paginatedData} apiEndpoint="/api/posts" />
 
       {/* Newsletter Capture Placeholder */}
       <div className="bg-cream border border-brand rounded-none p-8 mt-12 text-center">

@@ -34,7 +34,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userData = await apiFetch<User>('/api/users/me');
       setUser(userData);
     } catch (error) {
-      console.error('Failed to fetch user:', error);
+      // Use warn instead of error so it doesn't trigger the Next.js Dev Overlay on token expiry
+      console.warn('Failed to fetch user (token may be expired):', error);
       if (typeof window !== 'undefined') {
         localStorage.removeItem('access_token');
       }

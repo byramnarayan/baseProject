@@ -1,33 +1,61 @@
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, status,Depends
-from sqlalchemy import select
+from fastapi import APIRouter, HTTPException, status,Depends, Query
+
+from sqlalchemy import select,func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 import models
 from database import get_db,Base, engine 
-from schemas import PostCreate, PostResponse,PostUpdate
+from schemas import PostCreate, PostResponse,PostUpdate, PaginatedPostsResponse
 #  basiclyy pydantic define out data conaratc define what data comes in what data goes out
 #  use this for data validation, serilization and documentation for example
 
 from auth import CurrentUser
 # get cutrrent user dependecy 
+from config import settings
+
 
 router = APIRouter()
 
 
 
 
-@router.get("", response_model=list[PostResponse])
-async def get_posts(db: Annotated[AsyncSession, Depends(get_db)]):
+@router.get("", response_model=PaginatedPostsResponse)
+async def get_posts( 
+    
+    db: Annotated[AsyncSession, Depends(get_db)],
+    # query parameter
+    # SKIP AND LIMIT gives more control and common rest api better then pages
+    skip: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 10,
+    ):
+
+
+    ## get_posts - count query
+    count_result = await db.execute(select(func.count()).select_from(models.Post))
+    total = count_result.scalar() or 0
+
     result = await db.execute(
         select(models.Post).options(selectinload(models.Post.author))
-        .order_by(models.Post.date_posted.desc()),
+        .order_by(models.Post.date_posted.desc())
+        .offset(skip)  # tell database skip that post 
+        .limit(limit) # limit that many rows    
     )
     #  selectinload is the lazy laoding where data are alrdey loaded before the that function is callled 
     posts = result.scalars().all()
-    return posts
+
+
+    has_more= skip+len(posts)< total
+    ## get_posts - return PaginatedPostsResponse
+    return PaginatedPostsResponse(
+        posts=[PostResponse.model_validate(post) for post in posts],
+        total=total,
+        skip=skip,
+        limit=limit,
+        has_more=has_more,
+    )
 #  pydentic will automatically serilized author relation as user response 
 
 
@@ -163,6 +191,24 @@ async def update_post_partial(
     return post
 
 
+
+
+# LIKE POST
+@router.post("/{post_id}/like", response_model=PostResponse)
+async def like_post(post_id: int, current_user: CurrentUser, db: Annotated[AsyncSession, Depends(get_db)]):
+    result = await db.execute(
+        select(models.Post)
+        .options(selectinload(models.Post.author))
+        .where(models.Post.id == post_id)
+    )
+    post = result.scalars().first()
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+        
+    post.likes += 1
+    await db.commit()
+    await db.refresh(post)
+    return post
 
 
 # DELETE POST
